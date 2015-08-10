@@ -70,7 +70,16 @@
                     </div>
                 </div>
             </div>
-            <div class="col-md-9"></div>
+            <div class="col-md-9 chat-container" style="display: none;">
+                <div class="panel panel-default chat-main-panel">
+                    <div class="panel-heading panel-header">
+                    </div>
+                    <div class="panel-body">
+                    </div>
+                    <div class="panel-footer">
+                    </div>
+                </div>
+            </div>
         </div>
     </body>
     <script type="text/javascript" src="static/assets/jquery/jquery-1.11.1.js"></script>
@@ -113,18 +122,18 @@
     							var $html = '';
     							for(var i=0; i<friendRosters.length; i++){
     								var roster = friendRosters[i];
-    								$html += '<div class="list-item"><a href="#" class="list-item-avatar"><img src="static/static/img/avatar/default_roster_avatar.png" /></a><p class="list-item-name">' + roster['name'] + '</p></div>';
+    								$html += '<div class="list-item" data-id="' + roster['name'] + '" data-name="' + roster['name'] + '"><a href="#" class="list-item-avatar"><img src="static/static/img/avatar/default_roster_avatar.png" /></a><p class="list-item-name">' + roster['name'] + '</p></div>';
     							}
     							return $html;
-    						});
+    						}).children('.list-item').click(im.selectedUserToChating);
     						$('#strangers').empty().html(function(){
     							var $html = '';
     							for(var i=0; i<strangerRosters.length; i++){
     								var roster = strangerRosters[i];
-    								$html += '<div class="list-item"><a href="#" class="list-item-avatar"><img src="static/static/img/avatar/default_roster_avatar.png" /></a><p class="list-item-name">' + roster['name'] + '</p></div>';
+    								$html += '<div class="list-item" data-id="' + roster['name'] + '" data-name="' + roster['name'] + '"><a href="#" class="list-item-avatar"><img src="static/static/img/avatar/default_roster_avatar.png" /></a><p class="list-item-name">' + roster['name'] + '</p></div>';
     							}
     							return $html;
-    						});
+    						}).children('.list-item').click(im.selectedUserToChating);
     					}
     				}
     			});
@@ -147,13 +156,26 @@
 							for(var i=0; i<groups.length; i++){
 								var group = groups[i];
 								if(group){
-									
 								}
 							}
 						}
 					}
 				});
         	},
+        	populateChatWin: function(chatUserId, chatUserName){  // 构造聊天窗口
+        		var $html = '<div class="list-item" data-id="' + chatUserId + '" data-name="' + chatUserName + '"><a href="#" class="list-item-avatar"><img src="static/static/img/avatar/default_roster_avatar.png" /></a><p class="list-item-name">' + chatUserId + '</p></div>';
+        		$('.panel-header', '.chat-container').html($html);
+        	
+        	    $('.chat-container').show();
+        	},
+            selectedUserToChating: function(){  // 选择用户进行聊天
+            	//当前聊天用户
+            	var chatUserId = $(this).attr('data-id');
+            	var chatUserName = $(this).attr('data-name');
+            	if(chatUserId && chatUserName){
+            		im.populateChatWin(chatUserId, chatUserName);
+            	}
+            },
         	handleConnOpen: function(){  //连接打开时回调处理
         		//从连接中获取到当前的登录人注册帐号名
     			im.user.userid = im.conn.context.userId;
