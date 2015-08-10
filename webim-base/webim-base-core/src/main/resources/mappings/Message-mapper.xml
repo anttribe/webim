@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.anttribe.webim.base.core.domain.Message">
+	<cache readOnly="true" />
+	<resultMap id="Message-resultMap" type="org.anttribe.webim.base.core.domain.Message">
+		<result property="messageId" column="id" />
+		<result property="mfrom" column="mfrom" />
+		<result property="mto" column="mto" />
+		<result property="chatType" column="chatType" />
+		<result property="mtimestamp" column="mtimestamp" />
+		<result property="bodies" column="msgBodies" />
+		<result property="extParams" column="extParams" />
+		<result property="hxMsgId" column="hxMsgId" />
+	</resultMap>
+
+	<!-- insert: 插入单条数据 -->
+	<insert id="insert" parameterType="org.anttribe.webim.base.core.domain.Message">
+		<![CDATA[
+		insert into t_webim_message(id, mfrom, mto, chatType, mtimestamp, msgBodies, extParams, hxMsgId)
+		    values(#{messageId}, #{mfrom}, #{mto}, #{chatType}, #{mtimestamp}, #{bodies}, #{extParams}, #{hxMsgId})
+		]]>
+	</insert>
+
+	<!-- batchUpdate: 批量更新数据 -->
+	<update id="batchUpdate" parameterType="java.util.List">
+		update t_webim_message
+		<trim prefix="set" suffixOverrides=",">
+             <trim prefix="mtimestamp = case id" suffix="end,">
+                 <foreach collection="list" item="item">
+                     <if test="item.mtimestamp != null">
+                         when #{item.messageId} then #{item.mtimestamp}
+                     </if>
+                 </foreach>
+              </trim>
+              <trim prefix="msgBodies = case id" suffix="end,">
+                 <foreach collection="list" item="item">
+                     <if test="item.bodies != null">
+                         when #{item.messageId} then #{item.bodies}
+                     </if>
+                 </foreach>
+              </trim>
+              <trim prefix="extParams = case id" suffix="end,">
+                 <foreach collection="list" item="item">
+                     <if test="item.extParams != null">
+                         when #{item.messageId} then #{item.extParams}
+                     </if>
+                 </foreach>
+              </trim>
+              <trim prefix="hxMsgId = case id" suffix="end,">
+                 <foreach collection="list" item="item">
+                     <if test="item.hxMsgId != null">
+                         when #{item.messageId} then #{item.hxMsgId}
+                     </if>
+                 </foreach>
+              </trim>
+          </trim>
+          where id in 
+          <foreach collection="list" separator=", " item="item" open="(" close=")">
+              #{item.messageId}
+          </foreach>
+	</update>
+
+	<!-- queryAll: 查询所有数据 -->
+	<select id="queryAll" resultMap="Message-resultMap">
+		<![CDATA[
+		]]>
+	</select>
+
+	<!-- queryById: 根据id查询单条数据 -->
+	<select id="queryById" resultMap="Message-resultMap">
+		<![CDATA[
+		]]>
+	</select>
+
+	<!-- queryByCriteria: 根据条件查询数据 -->
+	<select id="queryByCriteria" resultMap="Message-resultMap"
+		parameterType="map">
+		<![CDATA[
+		]]>
+	</select>
+
+	<!-- queryHxLastUpdated: 查询最近后一条从环信同步的数据 -->
+	<select id="queryHxLastUpdated" resultMap="Message-resultMap">
+		<![CDATA[
+		    select id, mfrom, mto, chatType, mtimestamp, msgBodies, extParams, hxMsgId
+		        from t_webim_message 
+		        where hxMsgId is not null
+		        order by mtimestamp desc
+		        limit 1
+		]]>
+	</select>
+</mapper>
