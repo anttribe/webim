@@ -70,13 +70,20 @@
                     </div>
                 </div>
             </div>
-            <div class="col-md-9 chat-container" style="display: none;">
+            <div class="col-md-8 chat-container" style="display: none;">
                 <div class="panel panel-default chat-main-panel">
                     <div class="panel-heading panel-header">
+                        <div class="panel-header-title"></div>
+                        <div class="panel-close"><i class="glyphicon glyphicon-remove"></i></div>
                     </div>
                     <div class="panel-body">
                     </div>
                     <div class="panel-footer">
+                        <div class="chat-toolbar">
+                            <div id="add_expression_btn" class="chat-expression"></div>
+                            <textarea id="chat_textarea" class="chat_textarea"></textarea>
+                            <button type="button" class="btn btn-primary">发送</button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -164,7 +171,7 @@
         	},
         	populateChatWin: function(chatUserId, chatUserName){  // 构造聊天窗口
         		var $html = '<div class="list-item" data-id="' + chatUserId + '" data-name="' + chatUserName + '"><a href="#" class="list-item-avatar"><img src="static/static/img/avatar/default_roster_avatar.png" /></a><p class="list-item-name">' + chatUserId + '</p></div>';
-        		$('.panel-header', '.chat-container').html($html);
+        		$('.panel-header-title', '.chat-container').html($html);
         	
         	    $('.chat-container').show();
         	},

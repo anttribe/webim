@@ -13,6 +13,8 @@ body { padding: 0; background: #FFFFFF; color: rgba(0,0,0,.75); font-size: 13px;
 .nav-flat>li.active>a, .nav-flat>li.active>a:focus, .nav-flat>li.active>a:hover { color: #555; font-weight: bold; cursor: pointer; }
 .nav-flat>li>a:hover { background: none !important; color: #555; font-weight: bold; }
 
+.panel-heading, .panel-footer { border: none; }
+
 /* header */
 #header .tools {}
 #header .tools .tool-item { cursor: pointer; white-space: nowrap;}
