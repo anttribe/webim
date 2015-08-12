@@ -80,9 +80,10 @@
                     </div>
                     <div class="panel-footer">
                         <div class="chat-toolbar">
-                            <div id="add_expression_btn" class="chat-expression"></div>
-                            <textarea id="chat_textarea" class="chat_textarea"></textarea>
-                            <button type="button" class="btn btn-primary">发送</button>
+                            <div id="add_emoji_btn" class="chat-toolbar-btn"><span class="chat-emoji"></span></div>
+                            <div id="add_file_btn" class="chat-toolbar-btn"><span class="chat-file"></span></div>
+                            <textarea id="chat_textarea" class="chat-textarea"></textarea>
+                            <button type="button" class="btn btn-primary chat-send-btn">发送</button>
                         </div>
                     </div>
                 </div>
