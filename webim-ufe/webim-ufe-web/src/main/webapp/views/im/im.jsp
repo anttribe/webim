@@ -22,13 +22,11 @@
                         </div>
                     </div>
                     <div class="panel-body tab-content">
-                        <div id="dialogues" class="tab-pane active">
-                            dialogue
-                        </div>
+                        <div id="dialogues" class="tab-pane active"></div>
                         <div id="contacts" class="tab-pane">
                             <ul class="nav nav-justified nav-flat tabs">
-                                <li role="presentation" class="active"><a href="#rosters">好友</a></li>
-                                <li role="presentation"><a href="#groups">群</a></li>
+                                <li role="presentation" class="active"><a href="#rosters"><spring:message code="app.im.title.rosters" /></a></li>
+                                <li role="presentation"><a href="#groups"><spring:message code="app.im.title.groups" /></a></li>
                             </ul>
                             <div class="tab-content">
                                 <div id="rosters" class="tab-pane active">
@@ -36,7 +34,7 @@
                                         <div class="panel panel-default">
                                             <div class="panel-heading" role="tab" id="friendRosters">
                                                 <span class="panel-title">
-                                                    <a role="button" data-toggle="collapse" data-parent="#rosterAccordion" href="#friendCollapse" aria-expanded="true" aria-controls="friendCollapse">我的好友</a>
+                                                    <a role="button" data-toggle="collapse" data-parent="#rosterAccordion" href="#friendCollapse" aria-expanded="true" aria-controls="friendCollapse"><spring:message code="app.im.title.friend" /></a>
                                                 </span>
                                             </div>
                                             <div id="friendCollapse" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="friendRosters">
@@ -46,7 +44,7 @@
                                         <div class="panel panel-default">
                                             <div class="panel-heading" role="tab" id="strangerRosters">
                                                 <span class="panel-title">
-                                                    <a role="button" data-toggle="collapse" data-parent="#rosterAccordion" href="#strangerCollapse" aria-expanded="true" aria-controls="strangerCollapse">陌生人</a>
+                                                    <a role="button" data-toggle="collapse" data-parent="#rosterAccordion" href="#strangerCollapse" aria-expanded="true" aria-controls="strangerCollapse"><spring:message code="app.im.title.stranger" /></a>
                                                 </span>
                                             </div>
                                             <div id="strangerCollapse" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="strangerRosters">
@@ -58,14 +56,13 @@
                                 <div id="groups" class="tab-pane"></div>
                             </div>
                         </div>
-                        <div id="settings" class="tab-pane">
-                        </div>
+                        <div id="settings" class="tab-pane"></div>
                     </div>
                     <div class="panel-footer">
                         <ul class="nav nav-justified tabs">
-                            <li role="presentation" class="active first-tab"><a href="#dialogues"><i class="icon glyphicon glyphicon-comment"></i>会话</a></li>
-                            <li role="presentation"><a href="#contacts"><i class="icon glyphicon glyphicon-user"></i>联系人</a></li>
-                            <li role="presentation" class="last-tab"><a href="#settings"><i class="icon glyphicon glyphicon-cog"></i>设置</a></li>
+                            <li role="presentation" class="active first-tab"><a href="#dialogues"><i class="icon glyphicon glyphicon-comment"></i><spring:message code="app.im.title.dialogues" /></a></li>
+                            <li role="presentation"><a href="#contacts"><i class="icon glyphicon glyphicon-user"></i><spring:message code="app.im.title.contacts" /></a></li>
+                            <li role="presentation" class="last-tab"><a href="#settings"><i class="icon glyphicon glyphicon-cog"></i><spring:message code="app.im.title.settings" /></a></li>
                         </ul>
                     </div>
                 </div>
@@ -80,10 +77,10 @@
                     </div>
                     <div class="panel-footer">
                         <div class="chat-toolbar">
-                            <div id="add_emoji_btn" class="chat-toolbar-btn"><span class="chat-emoji"></span></div>
-                            <div id="add_file_btn" class="chat-toolbar-btn"><span class="chat-file"></span></div>
+                            <div id="add_emoji_btn" class="chat-toolbar-btn" title="<spring:message code="app.im.action.addemoji" />"><span class="chat-emoji"></span></div>
+                            <div id="add_file_btn" class="chat-toolbar-btn" title="<spring:message code="app.im.action.addefile" />"><span class="chat-file"></span></div>
                             <div class="chat-input"><textarea id="chat_textarea" class="chat-textarea"></textarea></div>
-                            <button type="button" class="btn btn-primary chat-send-btn">发送</button>
+                            <button type="button" class="btn btn-primary chat-send-btn"><spring:message code="app.common.action.send" /></button>
                         </div>
                     </div>
                 </div>
