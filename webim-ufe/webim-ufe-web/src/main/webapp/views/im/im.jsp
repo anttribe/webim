@@ -82,7 +82,7 @@
                         <div class="chat-toolbar">
                             <div id="add_emoji_btn" class="chat-toolbar-btn"><span class="chat-emoji"></span></div>
                             <div id="add_file_btn" class="chat-toolbar-btn"><span class="chat-file"></span></div>
-                            <textarea id="chat_textarea" class="chat-textarea"></textarea>
+                            <div class="chat-input"><textarea id="chat_textarea" class="chat-textarea"></textarea></div>
                             <button type="button" class="btn btn-primary chat-send-btn">发送</button>
                         </div>
                     </div>

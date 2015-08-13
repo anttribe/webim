@@ -34,8 +34,9 @@ body:before { content: ''; width: 100%; height: 100%; position: absolute; left: 
 
 .wraper .chat-container .panel-close { line-height: 100%; position: absolute; right: 10px; top: 22px; cursor: pointer; }
 .wraper .chat-container .panel-footer .chat-toolbar { height: 100%; line-height: 100%; padding: 6px; }
-.chat-toolbar .chat-toolbar-btn { display: inline-block; width: 32px; position: relative; padding: 6px; cursor: pointer; }
-.chat-toolbar .chat-toolbar-btn .chat-emoji { display: block; width: 32px; height: 32px; background: url(../img/sprite_icons.png) -32px -2px; }
-.chat-toolbar .chat-toolbar-btn .chat-file { display: block; width: 32px; height: 32px; background: url(../img/sprite_icons.png) -32px -36px; }
-.chat-toolbar .chat-textarea { position: absolute; left: 74px; right: 70px; resize: none; margin: 8px; padding: 8px; height: 32px; max-height: 100px; border-radius: 6px; -webkit-border-radius: 6px; -moz-border-radius: 6px; white-space: pre-wrap; word-wrap: break-word; }
-.chat-toolbar .chat-send-btn { position: absolute; margin: 6px; right: 10px; }
+.chat-toolbar .chat-toolbar-btn { display: inline-block; width: 26px; position: relative; padding: 6px 2px; cursor: pointer; }
+.chat-toolbar .chat-toolbar-btn .chat-emoji { display: block; width: 22px; height: 32px; background: url(../img/sprite_icons.png) -260px -170px; }
+.chat-toolbar .chat-toolbar-btn .chat-file { display: block; width: 22px; height: 32px; background: url(../img/sprite_icons.png) -46px -136px; }
+.chat-toolbar .chat-input { position: absolute; left: 68px; right: 80px; top: 4px;}
+.chat-toolbar .chat-input .chat-textarea { width: 100%; resize: none; margin: 8px; padding: 8px; height: 32px; max-height: 100px; border-radius: 6px; -webkit-border-radius: 6px; -moz-border-radius: 6px; white-space: pre-wrap; word-wrap: break-word; }
+.chat-toolbar .chat-send-btn { position: absolute; right: 10px; top: 4px; margin: 6px 0; }
