@@ -41,6 +41,7 @@
 		<mysql.version>5.1.22</mysql.version>
 		<quartz.version>2.2.1</quartz.version>
 
+		<components.version>0.0.1-SNAPSHOT</components.version>
 		<opengadget.version>0.0.1-SNAPSHOT</opengadget.version>
 	</properties>
 
@@ -154,6 +155,11 @@
 				<version>${mybatis-spring.version}</version>
 			</dependency>
 
+			<dependency>
+				<groupId>org.anttribe.components</groupId>
+				<artifactId>component-lang</artifactId>
+				<version>${components.version}</version>
+			</dependency>
 			<dependency>
 				<groupId>org.anttribe.opengadget</groupId>
 				<artifactId>opengadget-core</artifactId>

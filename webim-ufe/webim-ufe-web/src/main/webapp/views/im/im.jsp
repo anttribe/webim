@@ -104,6 +104,11 @@
         		password: '${user.hxPassword}',
         		nickname: '${user.nickname}'
         	},
+        	chatingUser: {  // 当前聊天用户对象, 如果是群组，该值表示群组对象
+        		userid: '', 
+        		type: ''  // user/groupchat, 单用户聊天/群组聊天
+        	},
+        	messageType: {},
         	populateRoster: function(){  //构造联系人列表
         		//获取当前登录人的联系人列表
     			im.conn.getRoster({
@@ -127,7 +132,7 @@
     							var $html = '';
     							for(var i=0; i<friendRosters.length; i++){
     								var roster = friendRosters[i];
-    								$html += '<div class="list-item" data-id="' + roster['name'] + '" data-name="' + roster['name'] + '"><a href="#" class="list-item-avatar"><img src="static/static/img/avatar/default_roster_avatar.png" /></a><p class="list-item-name">' + roster['name'] + '</p></div>';
+    								$html += '<div class="list-item" data-id="' + roster['name'] + '" data-name="' + roster['name'] + '" data-type="user"><a href="#" class="list-item-avatar"><img src="static/static/img/avatar/default_roster_avatar.png" /></a><p class="list-item-name">' + roster['name'] + '</p></div>';
     							}
     							return $html;
     						}).children('.list-item').click(im.selectedUserToChating);
@@ -135,7 +140,7 @@
     							var $html = '';
     							for(var i=0; i<strangerRosters.length; i++){
     								var roster = strangerRosters[i];
-    								$html += '<div class="list-item" data-id="' + roster['name'] + '" data-name="' + roster['name'] + '"><a href="#" class="list-item-avatar"><img src="static/static/img/avatar/default_roster_avatar.png" /></a><p class="list-item-name">' + roster['name'] + '</p></div>';
+    								$html += '<div class="list-item" data-id="' + roster['name'] + '" data-name="' + roster['name'] + '" data-type="user"><a href="#" class="list-item-avatar"><img src="static/static/img/avatar/default_roster_avatar.png" /></a><p class="list-item-name">' + roster['name'] + '</p></div>';
     							}
     							return $html;
     						}).children('.list-item').click(im.selectedUserToChating);
@@ -177,10 +182,44 @@
             	//当前聊天用户
             	var chatUserId = $(this).attr('data-id');
             	var chatUserName = $(this).attr('data-name');
+            	var chatUserType = $(this).attr('data-type');
             	if(chatUserId && chatUserName){
+            		im.chatingUser = {
+            			userid: chatUserId,
+            			type: chatUserType || 'user'
+            		};
             		im.populateChatWin(chatUserId, chatUserName);
             	}
             },
+            overChating: function(){  // 结束聊天
+            	im.chatingUser = {};
+        		$('.chat-container').hide();
+        	},
+        	sendingMessage: false, // 标志是否正在发送消息
+        	sendTextMessage: function(txtMessage){  // 发送文本聊天消息
+        		if(im.sendingMessage){
+        			return;
+        		}
+        	    im.sendingMessage = true;
+        	    // 发送消息
+        	},
+        	onSendTextMessage: function(e){  // 发送按钮事件
+        		var mto = im.chatingUser && im.chatingUser.userid;
+        	    if(!mto){
+        	    	return;
+        	    }
+        		// 获取输入框数据
+        		var textMsg = $('.chat_textarea').val();
+        	    if(!textMsg){
+        	    	return;
+        	    }
+        	    var textMessage = {
+        	    	mto: mto,
+        	    	type: im.chatingUser.type || 'chat',
+        	    	msg: textMsg
+        	    };
+        	    im.sendTextMessage(textMessage);
+        	},
         	handleConnOpen: function(){  //连接打开时回调处理
         		//从连接中获取到当前的登录人注册帐号名
     			im.user.userid = im.conn.context.userId;
@@ -190,6 +229,9 @@
         	    im.populateGroup();
         	    //设置用户上线状态，必须调用
         	    conn.setPresence();
+        	},
+        	handleOnError: function(e) {  //异常情况下的处理方法
+        		alert(e.msg);
         	}
         };
     </script>
@@ -235,8 +277,8 @@
 			    onInviteMessage : function(message) {  //收到群组邀请时的回调方法
 				    handleInviteMessage(message);
 			    },
-			    onError : function(message) {  //异常时的回调方法
-				    handleError(message);
+			    onError : function(e) {  //异常时的回调方法
+				    im.handleOnError(e);
 			    }
 		    });
 		    
@@ -255,6 +297,11 @@
         		$(this).tab('show');
         	});
         	$('.collapse').collapse({});
+        	
+        	// 聊天窗口关闭
+        	$('.panel-close').click(im.overChating);
+        	// 发送按钮事件
+        	$('.chat-send-btn').click(im.onSendTextMessage);;
         });
     </script>
 </html>

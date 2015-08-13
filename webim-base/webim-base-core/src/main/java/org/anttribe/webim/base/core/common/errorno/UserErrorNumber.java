@@ -1,5 +1,5 @@
 /*
- * 文  件   名: UserFacade.java
+ * 文  件   名: UserErrorNumber.java
  * 版         本: (Anttribe).webim. All rights reserved
  * 描         述: <描述>
  * 修   改  人: zhaoyong

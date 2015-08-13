@@ -32,7 +32,7 @@ body:before { content: ''; width: 100%; height: 100%; position: absolute; left: 
 .im-main-panel .panel-footer .tabs a { color: #fff; }
 .im-main-panel .panel-footer .tabs a:hover { color: #fff; background: #333; box-shadow: inset 0 0 10px #111; -webkit-box-shadow: inset 0 0 10px #111; -moz-box-shadow: inset 0 0 10px #111; }
 
-.wraper .chat-container .panel-close { line-height: 100%; position: absolute; right: 10px; top: 22px; cursor: pointer; }
+.wraper .chat-container .panel-close { line-height: 100%; position: absolute; right: 16px; top: 22px; cursor: pointer; }
 .wraper .chat-container .panel-footer .chat-toolbar { height: 100%; line-height: 100%; padding: 6px; }
 .chat-toolbar .chat-toolbar-btn { display: inline-block; width: 26px; position: relative; padding: 6px 2px; cursor: pointer; }
 .chat-toolbar .chat-toolbar-btn .chat-emoji { display: block; width: 22px; height: 32px; background: url(../img/sprite_icons.png) -260px -170px; }
