@@ -67,28 +67,34 @@
                     </div>
                 </div>
             </div>
-            <div class="col-md-8 chat-container" style="display: none;">
-                <div class="panel panel-default chat-main-panel">
-                    <div class="panel-heading panel-header">
-                        <div class="panel-header-title"></div>
-                        <div class="panel-close"><i class="glyphicon glyphicon-remove"></i></div>
-                    </div>
-                    <div class="panel-body">
-                    </div>
-                    <div class="panel-footer">
-                        <div class="chat-toolbar">
-                            <div id="add_emoji_btn" class="chat-toolbar-btn" title="<spring:message code="app.im.action.addemoji" />"><span class="chat-emoji"></span></div>
-                            <div id="add_file_btn" class="chat-toolbar-btn" title="<spring:message code="app.im.action.addefile" />"><span class="chat-file"></span></div>
-                            <div class="chat-input"><textarea id="chat_textarea" class="chat-textarea"></textarea></div>
+            <div class="col-md-8 chat-container">
+            </div>
+        </div>
+        
+        <div id="chat-window-template" class="chat-window" style="display: none;">
+            <div class="panel panel-default chat-main-panel">
+                <div class="panel-heading panel-header">
+                    <div class="panel-header-title"></div>
+                    <div class="panel-close"><i class="glyphicon glyphicon-remove"></i></div>
+                </div>
+                <div class="panel-body">
+                    <div class="chat-message-list"></div>
+                </div>
+                <div class="panel-footer">
+                    <div class="chat-toolbar">
+                        <form action="" enctype="multipart/form-data" class="form-horizontal chat-form">
+                            <div class="chat-toolbar-btn add-emoji-btn" title="<spring:message code="app.im.action.addemoji" />"><span class="chat-emoji"></span></div>
+                            <div class="chat-toolbar-btn add-file-btn" title="<spring:message code="app.im.action.addefile" />"><span class="chat-file"></span></div>
+                            <div class="chat-input"><textarea class="chat-textarea"></textarea></div>
                             <button type="button" class="btn btn-primary chat-send-btn"><spring:message code="app.common.action.send" /></button>
-                        </div>
+                        </form>
                     </div>
                 </div>
             </div>
         </div>
     </body>
     <script type="text/javascript" src="static/assets/jquery/jquery-1.11.1.js"></script>
-    <script type="text/javascript" src="static/assets/jquery.form.js"></script>
+    <script type="text/javascript" src="static/assets/jquery/jquery.form.js"></script>
     <script type="text/javascript" src="static/assets/bootstrap/js/bootstrap.min.js"></script>
 
     <!-- 环信webim sdk -->    
@@ -106,7 +112,7 @@
         	},
         	chatingUser: {  // 当前聊天用户对象, 如果是群组，该值表示群组对象
         		userid: '', 
-        		type: ''  // user/groupchat, 单用户聊天/群组聊天
+        		type: ''  // chat/groupchat, 单用户聊天/群组聊天
         	},
         	messageType: {},
         	populateRoster: function(){  //构造联系人列表
@@ -132,7 +138,7 @@
     							var $html = '';
     							for(var i=0; i<friendRosters.length; i++){
     								var roster = friendRosters[i];
-    								$html += '<div class="list-item" data-id="' + roster['name'] + '" data-name="' + roster['name'] + '" data-type="user"><a href="#" class="list-item-avatar"><img src="static/static/img/avatar/default_roster_avatar.png" /></a><p class="list-item-name">' + roster['name'] + '</p></div>';
+    								$html += '<div class="list-item" data-id="' + roster['name'] + '" data-name="' + roster['name'] + '" data-type="chat"><a href="#" class="list-item-avatar"><img src="static/static/img/avatar/default_roster_avatar.png" /></a><p class="list-item-name">' + roster['name'] + '</p></div>';
     							}
     							return $html;
     						}).children('.list-item').click(im.selectedUserToChating);
@@ -140,7 +146,7 @@
     							var $html = '';
     							for(var i=0; i<strangerRosters.length; i++){
     								var roster = strangerRosters[i];
-    								$html += '<div class="list-item" data-id="' + roster['name'] + '" data-name="' + roster['name'] + '" data-type="user"><a href="#" class="list-item-avatar"><img src="static/static/img/avatar/default_roster_avatar.png" /></a><p class="list-item-name">' + roster['name'] + '</p></div>';
+    								$html += '<div class="list-item" data-id="' + roster['name'] + '" data-name="' + roster['name'] + '" data-type="chat"><a href="#" class="list-item-avatar"><img src="static/static/img/avatar/default_roster_avatar.png" /></a><p class="list-item-name">' + roster['name'] + '</p></div>';
     							}
     							return $html;
     						}).children('.list-item').click(im.selectedUserToChating);
@@ -173,10 +179,17 @@
 				});
         	},
         	populateChatWin: function(chatUserId, chatUserName){  // 构造聊天窗口
+        		var chatingWindow = $('#chat-window-' + chatUserId);
+        		if(!chatingWindow || chatingWindow.length <= 0){
+        			chatingWindow = $('#chat-window-template').clone(true).attr({
+        				id: 'chat-window-' + chatUserId
+        			}).appendTo('.chat-container');
+        		}
+        		
+        		//聊天窗口标题
         		var $html = '<div class="list-item" data-id="' + chatUserId + '" data-name="' + chatUserName + '"><a href="#" class="list-item-avatar"><img src="static/static/img/avatar/default_roster_avatar.png" /></a><p class="list-item-name">' + chatUserId + '</p></div>';
-        		$('.panel-header-title', '.chat-container').html($html);
-        	
-        	    $('.chat-container').show();
+        		$('.panel-header-title', chatingWindow).html($html);
+        		$(chatingWindow).show().siblings().hide();
         	},
             selectedUserToChating: function(){  // 选择用户进行聊天
             	//当前聊天用户
@@ -192,8 +205,9 @@
             	}
             },
             overChating: function(){  // 结束聊天
+            	// 当前聊天窗口
+            	$('#chat-window-' + im.chatingUser.userid).hide();
             	im.chatingUser = {};
-        		$('.chat-container').hide();
         	},
         	sendingMessage: false, // 标志是否正在发送消息
         	sendTextMessage: function(txtMessage){  // 发送文本聊天消息
@@ -201,7 +215,73 @@
         			return;
         		}
         	    im.sendingMessage = true;
+        	    
+        	    // 添加发送人
+        	    $.extend(txtMessage, { from: im.user.userid });
         	    // 发送消息
+        	    $('.chat-form', '#chat-window-' + im.chatingUser.userid).ajaxSubmit({
+        	    	type: 'POST',
+       		        url: 'im/persistent',
+       		        data : {mfrom: txtMessage.from, mto: txtMessage.to, chatType: txtMessage.type, 'messageBodies[0].msg': txtMessage.msg, 'messageBodies[0].type': 'Text'},
+       		        success: function(result){
+       		    	    console.log(result);
+       		    	    // 成功响应
+       		    	    if(result && result['resultCode'] == '000000'){
+       		    		    $.extend(txtMessage, {
+       		    			    ext: {
+       		    				    messageId: result['data']
+       		    			    }
+       		    		    });
+       		    		    // easemobwebim-sdk发送文本消息的方法 to为发送给谁，meg为文本消息对象
+       		    		    im.conn.sendTextMessage(txtMessage);
+       		    		    
+       		    		    // 设置发送时间
+       		    		    $.extend(txtMessage, {timestamp: new Date().getTime()});
+       		    		    im.appendMessage(txtMessage);
+       		    		    im.resetChatingUI();
+       		    	    }
+       		        },
+       		        error: function(){
+       		        	// 如果发送消息失败，标志后台服务有问题，直接发送环信消息
+       		        	im.conn.sendTextMessage(txtMessage);
+       		        	im.appendMessage(txtMessage);
+       		        	im.resetChatingUI();
+       		        }
+        	    });
+        	},
+        	resetChatingUI: function(){  // 重置聊天界面
+        		$('.chat-textarea', '#chat-window-' + im.chatingUser.userid).val('');
+        		setTimeout(function(){
+        	    	im.sendingMessage = false;
+        	    }, 1000);
+        	},
+            appendMessage: function(message){  // 将消息添加到展示消息框
+            	$('<div>', {
+            		'class': 'chat-message-list-item',
+            		html: [$('<p>', {
+            			'class': 'datetime',
+            			html: message.timestamp || ''
+            		}), $('<div>', {
+            			'class': 'avatar' + ' ' + (message.from == im.user.userid ? 'fr' : 'fl'),
+            			html: '<img src="static/static/img/avatar/default_roster_avatar.png" />'
+            		}), $('<div>', {
+            			'class': 'bubble',
+            			html: $('<div>', {
+                			'class': 'bubble-content' + ' ' + (message.from == im.user.userid ? 'right fr' : 'left fl'),
+                			html: [$('<pre>', {
+                				'class': 'content',
+                				html: function(){
+                    				if(message){
+                                		// 消息体 {isemotion:true;body:[{type:txt,msg:ssss}{type:emotion,msg:imgdata}]}
+                                		//var localeMessage = null;
+                                	}
+                    			}
+                			}), $('<i>', {  // 重发按钮
+                				'class': ''
+                			})] 
+                		})
+            		})]
+            	}).appendTo($('.chat-message-list', '#chat-window-' + im.chatingUser.userid));
         	},
         	onSendTextMessage: function(e){  // 发送按钮事件
         		var mto = im.chatingUser && im.chatingUser.userid;
@@ -209,12 +289,12 @@
         	    	return;
         	    }
         		// 获取输入框数据
-        		var textMsg = $('.chat_textarea').val();
+        		var textMsg = $('.chat-textarea', '#chat-window-' + im.chatingUser.userid).val();
         	    if(!textMsg){
         	    	return;
         	    }
         	    var textMessage = {
-        	    	mto: mto,
+        	    	to: mto,
         	    	type: im.chatingUser.type || 'chat',
         	    	msg: textMsg
         	    };

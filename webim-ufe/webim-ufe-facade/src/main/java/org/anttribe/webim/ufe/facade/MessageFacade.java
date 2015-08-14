@@ -7,7 +7,6 @@
  */
 package org.anttribe.webim.ufe.facade;
 
-import org.anttribe.webim.base.core.common.Result;
 import org.anttribe.webim.base.core.domain.Message;
 
 /**
@@ -20,7 +19,7 @@ public interface MessageFacade
      * 持久化消息
      * 
      * @param message Message
-     * @return Result<String>
+     * @return String 消息id
      */
-    Result<String> persistentMessage(Message message);
+    String persistentMessage(Message message);
 }

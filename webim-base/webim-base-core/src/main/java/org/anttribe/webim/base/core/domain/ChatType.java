@@ -13,7 +13,7 @@ package org.anttribe.webim.base.core.domain;
  */
 public enum ChatType
 {
-    chat("chat", "users"), groupChat("groupchat", "chatgroups");
+    chat("chat", "users"), groupchat("groupchat", "chatgroups");
     
     private String hxTypeCode;
     

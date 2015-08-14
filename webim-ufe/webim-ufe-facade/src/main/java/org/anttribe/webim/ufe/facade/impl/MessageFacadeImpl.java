@@ -10,7 +10,7 @@ package org.anttribe.webim.ufe.facade.impl;
 import java.util.List;
 
 import org.anttribe.component.lang.UUIDUtils;
-import org.anttribe.webim.base.core.common.Result;
+import org.anttribe.webim.base.application.MessageApplication;
 import org.anttribe.webim.base.core.common.errorno.SystemErrorNumber;
 import org.anttribe.webim.base.core.common.exception.UnifyException;
 import org.anttribe.webim.base.core.domain.Message;
@@ -20,11 +20,14 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 /**
  * @author zhaoyong
  * @version 2015年8月13日
  */
+@Service("messageFacade")
 public class MessageFacadeImpl implements MessageFacade
 {
     /**
@@ -32,10 +35,15 @@ public class MessageFacadeImpl implements MessageFacade
      */
     private static Logger logger = LoggerFactory.getLogger(MessageFacadeImpl.class);
     
+    /**
+     * messageApplication
+     */
+    @Autowired
+    private MessageApplication messageApplication;
+    
     @Override
     public String persistentMessage(Message message)
     {
-        Result<String> result = new Result<String>();
         if (null == message)
         {
             logger.error("Sending message, param message is null.");
@@ -65,6 +73,7 @@ public class MessageFacadeImpl implements MessageFacade
             messageBody.setId(UUIDUtils.getRandomUUID());
             messageBody.setMessage(message);
         }
+        messageApplication.saveMessage(message);
         
         return message.getMessageId();
     }

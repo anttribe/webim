@@ -17,14 +17,19 @@ import javax.servlet.http.HttpSession;
 import org.anttribe.webim.base.core.common.Global;
 import org.anttribe.webim.base.core.common.Result;
 import org.anttribe.webim.base.core.common.errorno.MessageErrorNumber;
+import org.anttribe.webim.base.core.common.errorno.SystemErrorNumber;
+import org.anttribe.webim.base.core.common.exception.UnifyException;
 import org.anttribe.webim.base.core.domain.Message;
 import org.anttribe.webim.base.core.domain.MessageBody;
 import org.anttribe.webim.base.core.domain.MessageType;
 import org.anttribe.webim.base.core.domain.User;
+import org.anttribe.webim.ufe.facade.MessageFacade;
+import org.anttribe.webim.ufe.web.constants.Constants;
 import org.anttribe.webim.ufe.web.constants.Keys;
 import org.apache.commons.collections.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -39,7 +44,10 @@ import org.springframework.web.servlet.ModelAndView;
 @Controller
 public class IMController
 {
-    private static Logger logger = LoggerFactory.getLogger(IMController.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(IMController.class);
+    
+    @Autowired
+    private MessageFacade messageFacade;
     
     @RequestMapping("/im")
     public ModelAndView im(HttpSession httpSession)
@@ -63,8 +71,9 @@ public class IMController
      */
     @RequestMapping("/im/persistent")
     @ResponseBody
-    public Result<?> persistentMessage(Message message, @RequestParam(value = "file", required = false)
-    MultipartFile file, HttpServletRequest request, HttpServletResponse response)
+    public Result<?> persistentMessage(Message message,
+        @RequestParam(value = "file", required = false) MultipartFile file, HttpServletRequest request,
+        HttpServletResponse response)
     {
         Result<String> result = new Result<String>();
         
@@ -86,7 +95,23 @@ public class IMController
             }
         }
         
-        // result = easemobMessageService.persistentMessage(message);
+        try
+        {
+            String messageId = messageFacade.persistentMessage(message);
+            
+            result.setResultCode(Constants.DEFAULT_SUCCESS_RESULTCODE);
+            result.setData(messageId);
+        }
+        catch (UnifyException e)
+        {
+            LOGGER.warn("Persistenting message get error: {}", e.getErrorNo());
+            result.setResultCode(e.getErrorNo());
+        }
+        catch (Exception e)
+        {
+            LOGGER.warn("Persistenting message get error: {}", e);
+            result.setResultCode(SystemErrorNumber.SYSTEM_ERROR);
+        }
         
         // 加入头信息
         response.addHeader("Access-Control-Allow-Origin", "*");
@@ -120,7 +145,7 @@ public class IMController
         }
         catch (Exception e)
         {
-            logger.error("Transfering upload file[{}] to target[{}] error, cause: {}",
+            LOGGER.error("Transfering upload file[{}] to target[{}] error, cause: {}",
                 file.getOriginalFilename(),
                 targetFile.getAbsolutePath(),
                 e);
