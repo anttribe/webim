@@ -53,10 +53,12 @@ body:before { content: ''; width: 100%; height: 100%; position: absolute; left: 
 .chat-message-list .chat-message-list-item .bubble-content:before, .chat-message-list .chat-message-list-item .bubble-content:after  { position: absolute; top: 8px; border: 5px solid transparent; content: " "; border-left-color: #b2e281; border-left-width: 5px; }
 .chat-message-list .chat-message-list-item .bubble-content.right:after { left: 100%; }
 .chat-message-list .chat-message-list-item .bubble-content .content { background: none !important; border: 0 !important; line-height: 20px !important; }
+.chat-message-list .chat-message-list-item .bubble-content .content img.emotion { width: 22px; height: 22px; }
 
 /* 表情 */
-.wraper .chat-container .emotion-panel { z-index: 99; width: 380px; height: 180px; background-color: #FFFFFF; border-radius: 6px; border: 1px solid #dedede; }
-.emotion-panel .emotion-content { padding: 10px; }
+.wraper .chat-container .emotion-panel { position: absolute; bottom: 48px; left: 20px; z-index: 999; width: 304px; height: 150px; background-color: #FFFFFF; border-radius: 6px; border: 1px solid #dedede; }
+.emotion-panel .emotion-content { position: relative; width: 100%; height: 100%; padding: 10px; }
+.emotion-panel .emotion-content:after { position: absolute; top: 100%; left: 10px; border: 5px solid transparent; content: " "; border-top-color: #FFFFFF; border-top-width: 5px; } 
 .emotion-panel .emotion-content .emotion { float: left; font-size: 0; text-indent: -999em; border-bottom: 1px solid #F0F0F0; border-right: 1px solid #F0F0F0; cursor: pointer; padding: 4px; }
-.emotion-panel .emotion-content .emotion img { width: 26px; height: 26px; }
+.emotion-panel .emotion-content .emotion img { width: 22px; height: 22px; }
 

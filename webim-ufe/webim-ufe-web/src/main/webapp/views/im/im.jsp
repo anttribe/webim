@@ -68,7 +68,7 @@
                 </div>
             </div>
             <div class="col-md-8 chat-container">
-                <div class="emotion-panel">
+                <div class="emotion-panel" style="display: none;">
                     <div class="emotion-content"></div>
                 </div>
             </div>
@@ -205,9 +205,17 @@
         					'id': '' + key,
         					'class': 'emotion',
             				html: '<img src="' + emotionData + '" />'
-            			}).click().appendTo('.emotion-content');
+            			}).click(im.onSelectedEmotion).appendTo('.emotion-content');
         			}
         		}
+        	},
+        	onSelectedEmotion: function(){  // 选中表情
+        		// 获取选择中表情
+        		var emotion = $(this).attr('id');
+        	    if(emotion){
+        	    	var value = $('.chat-textarea', '#chat-window-' + im.chatingUser.userid).val();
+        	    	$('.chat-textarea', '#chat-window-' + im.chatingUser.userid).val(value + '' + emotion);
+        	    }
         	},
             selectedUserToChating: function(){  // 选择用户进行聊天
             	//当前聊天用户
@@ -265,7 +273,7 @@
        		        	// 如果发送消息失败，标志后台服务有问题，直接发送环信消息
        		        	// im.conn.sendTextMessage(txtMessage);
        		        	console.log('error');
-       		        	$.extend(txtMessage, {timestamp: new Date().getTime(), sent: false});
+       		        	$.extend(txtMessage, {data: txtMessage.msg, timestamp: new Date().getTime(), sent: false});
        		        	im.appendMessage(txtMessage);
        		        	im.resetChatingUI();
        		        }
@@ -273,6 +281,7 @@
         	},
         	resetChatingUI: function(){  // 重置聊天界面
         		$('.chat-textarea', '#chat-window-' + im.chatingUser.userid).val('');
+        	    $('.emotion-panel').hide();
         		setTimeout(function(){
         	    	im.sendingMessage = false;
         	    }, 1000);
@@ -285,7 +294,7 @@
             			html: Utils.$datetimeFormat(message.timestamp, 'HH:mm:ss') || ''  //时间格式化
             		}), $('<div>', {
             			'class': 'avatar' + ' ' + (message.from == im.user.userid ? 'fr' : 'fl'),
-            			html: '<img src="static/static/img/avatar/default_roster_avatar.png" />'
+            			html: '<img src="static/static/img/avatar/roster_avatar_male.png" />'
             		}), $('<div>', {
             			'class': 'bubble',
             			html: $('<div>', {
@@ -303,7 +312,6 @@
                                 		} else{
                                 			localeMessage = message.data;
                                 		}
-                                		
                                 		var messageBodies = localeMessage;
                                 		for (var i = 0; i < messageBodies.length; i++) {
                                 			var messageBody = messageBodies[i];
@@ -311,7 +319,7 @@
                                 			var data = messageBody.data;
                                 			// 表情消息
                                 			if (type == 'emotion') {
-                                				$html += '';
+                                				$html += '<img class="emotion" src="' + data + '">';
                                 			} else if (type == "pic" || type == 'audio' || type == 'video') {
                                 				var filename = messageBody.filename;
                                 				$html += '';
@@ -348,6 +356,9 @@
         	    	msg: textMsg
         	    };
         	    im.sendTextMessage(textMessage);
+        	},
+        	onAddEmotion: function(e){  // 添加表情
+        		$('.emotion-panel').toggle();
         	},
         	handleReceiveMessage: function(easemobMessage){  //处理接收的消息
         		// Object {type: "chat", from: "jsyc", to: "anttribe", data: "aBC", ext: {messageId: "0190ddc6a7b44ff5a9d69176ad8cfef8"}}
@@ -439,6 +450,8 @@
         	$('.panel-close').click(im.overChating);
         	// 发送按钮事件
         	$('.chat-send-btn').click(im.onSendTextMessage);
+        	// 添加表情按钮事件处理
+        	$('.add-emotion-btn').click(im.onAddEmotion);
         });
     </script>
 </html>
