@@ -38,7 +38,7 @@ body:before { content: ''; width: 100%; height: 100%; position: absolute; left: 
 .wraper .chat-container .chat-window .panel-close { line-height: 100%; position: absolute; right: 16px; top: 22px; cursor: pointer; }
 .wraper .chat-container .chat-window .panel-footer .chat-toolbar { height: 100%; line-height: 100%; padding: 6px; }
 .chat-toolbar .chat-toolbar-btn { display: inline-block; width: 26px; position: relative; padding: 6px 2px; cursor: pointer; }
-.chat-toolbar .chat-toolbar-btn .chat-emoji { display: block; width: 22px; height: 32px; background: url(../img/sprite_icons.png) -260px -170px; }
+.chat-toolbar .chat-toolbar-btn .chat-emotion { display: block; width: 22px; height: 32px; background: url(../img/sprite_icons.png) -260px -170px; }
 .chat-toolbar .chat-toolbar-btn .chat-file { display: block; width: 22px; height: 32px; background: url(../img/sprite_icons.png) -46px -136px; }
 .chat-toolbar .chat-input { position: absolute; left: 68px; right: 80px; top: 4px;}
 .chat-toolbar .chat-input .chat-textarea { width: 100%; resize: none; margin: 8px; padding: 8px; height: 32px; max-height: 100px; border-radius: 6px; -webkit-border-radius: 6px; -moz-border-radius: 6px; white-space: pre-wrap; word-wrap: break-word; }
@@ -46,10 +46,17 @@ body:before { content: ''; width: 100%; height: 100%; position: absolute; left: 
 
 .wraper .chat-container .chat-window .chat-body { width: 100%; position: absolute; top: 50px; bottom: 52px; }
 .wraper .chat-container .chat-window .chat-body .chat-message-list { min-height: 100%; max-height: 100%; overflow-y: auto; overflow-x: hidden; }
-.chat-message-list .chat-message-list-item { }
+.chat-message-list .chat-message-list-item { padding: 4px; }
 .chat-message-list .chat-message-list-item .datetime { text-align: center; color: #dcdcdc; }
 .chat-message-list .chat-message-list-item .bubble { max-width: 100%; overflow-x: hidden; }
 .chat-message-list .chat-message-list-item .bubble-content { position: relative; display: inline-block; max-width: 100%; min-height:36px; padding: 10px 12px; font-size: 14px; word-wrap: break-word; word-break: break-all; background: #b2e281; border-radius: 4px; -webkit-border-radius: 4px; text-align: left; margin: 0 10px; }
 .chat-message-list .chat-message-list-item .bubble-content:before, .chat-message-list .chat-message-list-item .bubble-content:after  { position: absolute; top: 8px; border: 5px solid transparent; content: " "; border-left-color: #b2e281; border-left-width: 5px; }
 .chat-message-list .chat-message-list-item .bubble-content.right:after { left: 100%; }
 .chat-message-list .chat-message-list-item .bubble-content .content { background: none !important; border: 0 !important; line-height: 20px !important; }
+
+/* 表情 */
+.wraper .chat-container .emotion-panel { z-index: 99; width: 380px; height: 180px; background-color: #FFFFFF; border-radius: 6px; border: 1px solid #dedede; }
+.emotion-panel .emotion-content { padding: 10px; }
+.emotion-panel .emotion-content .emotion { float: left; font-size: 0; text-indent: -999em; border-bottom: 1px solid #F0F0F0; border-right: 1px solid #F0F0F0; cursor: pointer; padding: 4px; }
+.emotion-panel .emotion-content .emotion img { width: 26px; height: 26px; }
+

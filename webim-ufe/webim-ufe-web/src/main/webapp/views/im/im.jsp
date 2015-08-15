@@ -17,7 +17,7 @@
                 <div class="panel panel-default im-main-panel">
                     <div class="panel-heading panel-header">
                         <div class="list-item">
-                            <a href="#" class="list-item-avatar"><img src="static/static/img/avatar/default_roster_avatar.png" /></a>
+                            <a href="#" class="list-item-avatar"><img src="static/static/img/avatar/roster_avatar_male.png" /></a>
                             <p class="list-item-name">${user.username}</p>
                         </div>
                     </div>
@@ -68,6 +68,9 @@
                 </div>
             </div>
             <div class="col-md-8 chat-container">
+                <div class="emotion-panel">
+                    <div class="emotion-content"></div>
+                </div>
             </div>
         </div>
         
@@ -83,7 +86,7 @@
                 <div class="panel-footer">
                     <div class="chat-toolbar">
                         <form action="" enctype="multipart/form-data" class="form-horizontal chat-form">
-                            <div class="chat-toolbar-btn add-emoji-btn" title="<spring:message code="app.im.action.addemoji" />"><span class="chat-emoji"></span></div>
+                            <div class="chat-toolbar-btn add-emotion-btn" title="<spring:message code="app.im.action.addemotion" />"><span class="chat-emotion"></span></div>
                             <div class="chat-toolbar-btn add-file-btn" title="<spring:message code="app.im.action.addefile" />"><span class="chat-file"></span></div>
                             <div class="chat-input"><textarea class="chat-textarea"></textarea></div>
                             <button type="button" class="btn btn-primary chat-send-btn"><spring:message code="app.common.action.send" /></button>
@@ -139,7 +142,7 @@
     							var $html = '';
     							for(var i=0; i<friendRosters.length; i++){
     								var roster = friendRosters[i];
-    								$html += '<div class="list-item" data-id="' + roster['name'] + '" data-name="' + roster['name'] + '" data-type="chat"><a href="#" class="list-item-avatar"><img src="static/static/img/avatar/default_roster_avatar.png" /></a><p class="list-item-name">' + roster['name'] + '</p></div>';
+    								$html += '<div class="list-item" data-id="' + roster['name'] + '" data-name="' + roster['name'] + '" data-type="chat"><a href="#" class="list-item-avatar"><img src="static/static/img/avatar/roster_avatar_male.png" /></a><p class="list-item-name">' + roster['name'] + '</p></div>';
     							}
     							return $html;
     						}).children('.list-item').click(im.selectedUserToChating);
@@ -147,7 +150,7 @@
     							var $html = '';
     							for(var i=0; i<strangerRosters.length; i++){
     								var roster = strangerRosters[i];
-    								$html += '<div class="list-item" data-id="' + roster['name'] + '" data-name="' + roster['name'] + '" data-type="chat"><a href="#" class="list-item-avatar"><img src="static/static/img/avatar/default_roster_avatar.png" /></a><p class="list-item-name">' + roster['name'] + '</p></div>';
+    								$html += '<div class="list-item" data-id="' + roster['name'] + '" data-name="' + roster['name'] + '" data-type="chat"><a href="#" class="list-item-avatar"><img src="static/static/img/avatar/roster_avatar_male.png" /></a><p class="list-item-name">' + roster['name'] + '</p></div>';
     							}
     							return $html;
     						}).children('.list-item').click(im.selectedUserToChating);
@@ -165,7 +168,7 @@
     							for(var i=0; i<groups.length; i++){
     								var group = groups[i];
     								if(group){
-    									$html += '<div class="roster_item"><a href="#"><img class="roster_item_avatar" src="static/static/img/avatar/default_roster_avatar.png" /></a><p>' + group['name'] + '</p></div>';
+    									$html += '<div class="roster_item"><a href="#"><img class="roster_item_avatar" src="static/static/img/avatar/group_avatar.png" /></a><p>' + group['name'] + '</p></div>';
     								}
     							}
     							return $html;
@@ -188,9 +191,23 @@
         		}
         		
         		//聊天窗口标题
-        		var $html = '<div class="list-item" data-id="' + chatUserId + '" data-name="' + chatUserName + '"><a href="#" class="list-item-avatar"><img src="static/static/img/avatar/default_roster_avatar.png" /></a><p class="list-item-name">' + chatUserId + '</p></div>';
+        		var $html = '<div class="list-item" data-id="' + chatUserId + '" data-name="' + chatUserName + '"><a href="#" class="list-item-avatar"><img src="static/static/img/avatar/roster_avatar_male.png" /></a><p class="list-item-name">' + chatUserId + '</p></div>';
         		$('.panel-header-title', chatingWindow).html($html);
         		$(chatingWindow).show().siblings().hide();
+        	},
+        	populateEmotionPanel: function(){  //构造表情面板
+        		// Easemob.im.Helper.EmotionPicData设置表情的json数组
+        		var emotionDatas = Easemob.im.Helper.EmotionPicData;
+        		for (var key in emotionDatas) {
+        			var emotionData = emotionDatas[key];
+        			if(emotionData){
+        				$('<a>', {
+        					'id': '' + key,
+        					'class': 'emotion',
+            				html: '<img src="' + emotionData + '" />'
+            			}).click().appendTo('.emotion-content');
+        			}
+        		}
         	},
             selectedUserToChating: function(){  // 选择用户进行聊天
             	//当前聊天用户
@@ -361,31 +378,24 @@
 				    im.handleConnOpen();
 			    },
 			    onClosed : function() {  //当连接关闭时的回调方法
-			    	console.log('close');
 				    handleClosed();
 			    },
 			    onTextMessage : function(message) {  //收到文本消息时的回调方法
-			    	console.log(message);
 				    im.handleReceiveMessage(message);
 			    },
 			    onEmotionMessage : function(message) {  //收到表情消息时的回调方法
-			    	console.log(message);
 				    handleEmotion(message);
 			    },
 			    onPictureMessage : function(message) { //收到图片消息时的回调方法
-			    	console.log(message);
 				    handlePictureMessage(message);
 			    },
 			    onAudioMessage : function(message) {  //收到音频消息的回调方法
-			    	console.log(message);
 				    handleAudioMessage(message);
 			    },
 			    onLocationMessage : function(message) {  //收到位置消息的回调方法
-			    	console.log(message);
 				    handleLocationMessage(message);
 			    },
 			    onFileMessage : function(message) {  //收到文件消息的回调方法
-			    	console.log(message);
 				    handleFileMessage(message);
 			    },
 			    onVideoMessage : function(message) {  //收到视频消息的回调方法
@@ -393,15 +403,12 @@
 				    handleVideoMessage(message);
 			    },
 			    onPresence : function(message) {  //收到联系人订阅请求的回调方法
-			    	console.log('onPresence: ' + message);
 				    handlePresence(message);
 			    },
 			    onRoster : function(message) {  //收到联系人信息的回调方法
-			    	console.log(message);
 				    handleRoster(message);
 			    },
 			    onInviteMessage : function(message) {  //收到群组邀请时的回调方法
-			    	console.log(message);
 				    handleInviteMessage(message);
 			    },
 			    onError : function(e) {  //异常时的回调方法
@@ -424,6 +431,9 @@
         		$(this).tab('show');
         	});
         	$('.collapse').collapse({});
+        	
+        	// 初始化表情列表
+        	im.populateEmotionPanel();
         	
         	// 聊天窗口关闭
         	$('.panel-close').click(im.overChating);
