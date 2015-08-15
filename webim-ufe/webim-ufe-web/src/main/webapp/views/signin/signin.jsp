@@ -49,6 +49,5 @@
         </div>
     </body>
     <script type="text/javascript" src="static/assets/jquery/jquery-1.11.1.js"></script>
-    <script type="text/javascript" src="static/assets/jquery.form.js"></script>
     <script type="text/javascript" src="static/assets/bootstrap/js/bootstrap.min.js"></script>
 </html>

@@ -77,7 +77,7 @@
                     <div class="panel-header-title"></div>
                     <div class="panel-close"><i class="glyphicon glyphicon-remove"></i></div>
                 </div>
-                <div class="panel-body">
+                <div class="panel-body chat-body">
                     <div class="chat-message-list"></div>
                 </div>
                 <div class="panel-footer">
@@ -96,10 +96,11 @@
     <script type="text/javascript" src="static/assets/jquery/jquery-1.11.1.js"></script>
     <script type="text/javascript" src="static/assets/jquery/jquery.form.js"></script>
     <script type="text/javascript" src="static/assets/bootstrap/js/bootstrap.min.js"></script>
-
     <!-- 环信webim sdk -->    
     <script type="text/javascript" src="static/assets/easymob/strophe-custom-2.0.0.js"></script>
     <script type="text/javascript" src="static/assets/easymob/easemob.im-1.0.5.js"></script>
+    
+    <script type="text/javascript" src="static/static/js/Utils.js"></script>
     <script type="text/javascript">
         var im = im || {
         	hxAppKey: '${hxAppKey}',
@@ -197,6 +198,9 @@
             	var chatUserName = $(this).attr('data-name');
             	var chatUserType = $(this).attr('data-type');
             	if(chatUserId && chatUserName){
+            		
+            		$(this).addClass('active').siblings().removeClass('active');
+            		
             		im.chatingUser = {
             			userid: chatUserId,
             			type: chatUserType || 'user'
@@ -224,7 +228,6 @@
        		        url: 'im/persistent',
        		        data : {mfrom: txtMessage.from, mto: txtMessage.to, chatType: txtMessage.type, 'messageBodies[0].msg': txtMessage.msg, 'messageBodies[0].type': 'Text'},
        		        success: function(result){
-       		    	    console.log(result);
        		    	    // 成功响应
        		    	    if(result && result['resultCode'] == '000000'){
        		    		    $.extend(txtMessage, {
@@ -236,14 +239,16 @@
        		    		    im.conn.sendTextMessage(txtMessage);
        		    		    
        		    		    // 设置发送时间
-       		    		    $.extend(txtMessage, {timestamp: new Date().getTime()});
+       		    		    $.extend(txtMessage, {data: txtMessage.msg, timestamp: new Date().getTime(), sent: true});
        		    		    im.appendMessage(txtMessage);
        		    		    im.resetChatingUI();
        		    	    }
        		        },
        		        error: function(){
        		        	// 如果发送消息失败，标志后台服务有问题，直接发送环信消息
-       		        	im.conn.sendTextMessage(txtMessage);
+       		        	// im.conn.sendTextMessage(txtMessage);
+       		        	console.log('error');
+       		        	$.extend(txtMessage, {timestamp: new Date().getTime(), sent: false});
        		        	im.appendMessage(txtMessage);
        		        	im.resetChatingUI();
        		        }
@@ -260,7 +265,7 @@
             		'class': 'chat-message-list-item',
             		html: [$('<p>', {
             			'class': 'datetime',
-            			html: message.timestamp || ''
+            			html: Utils.$datetimeFormat(message.timestamp, 'HH:mm:ss') || ''  //时间格式化
             		}), $('<div>', {
             			'class': 'avatar' + ' ' + (message.from == im.user.userid ? 'fr' : 'fl'),
             			html: '<img src="static/static/img/avatar/default_roster_avatar.png" />'
@@ -271,10 +276,34 @@
                 			html: [$('<pre>', {
                 				'class': 'content',
                 				html: function(){
+                					var $html = '';
                     				if(message){
-                                		// 消息体 {isemotion:true;body:[{type:txt,msg:ssss}{type:emotion,msg:imgdata}]}
-                                		//var localeMessage = null;
+                                		// 消息体 {isemotion:true; body:[{type:txt,data:ssss}{type:emotion,msg:imgdata}]}
+                                		var localeMessage = null;
+                                		if(message.data && (typeof message.data == 'string')){
+                                			localeMessage = Easemob.im.Helper.parseTextMessage(message.data);
+                                			localeMessage = localeMessage.body;
+                                		} else{
+                                			localeMessage = message.data;
+                                		}
+                                		
+                                		var messageBodies = localeMessage;
+                                		for (var i = 0; i < messageBodies.length; i++) {
+                                			var messageBody = messageBodies[i];
+                                			var type = messageBody.type;
+                                			var data = messageBody.data;
+                                			// 表情消息
+                                			if (type == 'emotion') {
+                                				$html += '';
+                                			} else if (type == "pic" || type == 'audio' || type == 'video') {
+                                				var filename = messageBody.filename;
+                                				$html += '';
+                                			} else {
+                                				$html += '' + data;
+                                			}
+                                		}
                                 	}
+                    				return $html;
                     			}
                 			}), $('<i>', {  // 重发按钮
                 				'class': ''
@@ -282,6 +311,9 @@
                 		})
             		})]
             	}).appendTo($('.chat-message-list', '#chat-window-' + im.chatingUser.userid));
+            
+                // 滚动到聊天框底部，保证展示最新的消息
+            	$('.chat-message-list', '#chat-window-' + im.chatingUser.userid).scrollTop($('.chat-message-list', '#chat-window-' + im.chatingUser.userid)[0].scrollHeight);
         	},
         	onSendTextMessage: function(e){  // 发送按钮事件
         		var mto = im.chatingUser && im.chatingUser.userid;
@@ -300,6 +332,10 @@
         	    };
         	    im.sendTextMessage(textMessage);
         	},
+        	handleReceiveMessage: function(easemobMessage){  //处理接收的消息
+        		// Object {type: "chat", from: "jsyc", to: "anttribe", data: "aBC", ext: {messageId: "0190ddc6a7b44ff5a9d69176ad8cfef8"}}
+        		im.appendMessage(easemobMessage);
+        	},
         	handleConnOpen: function(){  //连接打开时回调处理
         		//从连接中获取到当前的登录人注册帐号名
     			im.user.userid = im.conn.context.userId;
@@ -308,7 +344,7 @@
         	    //构造群组列表
         	    im.populateGroup();
         	    //设置用户上线状态，必须调用
-        	    conn.setPresence();
+        	    im.conn.setPresence();
         	},
         	handleOnError: function(e) {  //异常情况下的处理方法
         		alert(e.msg);
@@ -325,36 +361,47 @@
 				    im.handleConnOpen();
 			    },
 			    onClosed : function() {  //当连接关闭时的回调方法
+			    	console.log('close');
 				    handleClosed();
 			    },
 			    onTextMessage : function(message) {  //收到文本消息时的回调方法
-				    handleTextMessage(message);
+			    	console.log(message);
+				    im.handleReceiveMessage(message);
 			    },
 			    onEmotionMessage : function(message) {  //收到表情消息时的回调方法
+			    	console.log(message);
 				    handleEmotion(message);
 			    },
 			    onPictureMessage : function(message) { //收到图片消息时的回调方法
+			    	console.log(message);
 				    handlePictureMessage(message);
 			    },
 			    onAudioMessage : function(message) {  //收到音频消息的回调方法
+			    	console.log(message);
 				    handleAudioMessage(message);
 			    },
 			    onLocationMessage : function(message) {  //收到位置消息的回调方法
+			    	console.log(message);
 				    handleLocationMessage(message);
 			    },
 			    onFileMessage : function(message) {  //收到文件消息的回调方法
+			    	console.log(message);
 				    handleFileMessage(message);
 			    },
 			    onVideoMessage : function(message) {  //收到视频消息的回调方法
+			    	console.log(message);
 				    handleVideoMessage(message);
 			    },
 			    onPresence : function(message) {  //收到联系人订阅请求的回调方法
+			    	console.log('onPresence: ' + message);
 				    handlePresence(message);
 			    },
 			    onRoster : function(message) {  //收到联系人信息的回调方法
+			    	console.log(message);
 				    handleRoster(message);
 			    },
 			    onInviteMessage : function(message) {  //收到群组邀请时的回调方法
+			    	console.log(message);
 				    handleInviteMessage(message);
 			    },
 			    onError : function(e) {  //异常时的回调方法
@@ -381,7 +428,7 @@
         	// 聊天窗口关闭
         	$('.panel-close').click(im.overChating);
         	// 发送按钮事件
-        	$('.chat-send-btn').click(im.onSendTextMessage);;
+        	$('.chat-send-btn').click(im.onSendTextMessage);
         });
     </script>
 </html>
