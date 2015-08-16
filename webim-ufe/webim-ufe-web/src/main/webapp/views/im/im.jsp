@@ -10,6 +10,8 @@
         <link rel="stylesheet" type="text/css" href="static/static/css/base.css" />
         <link rel="stylesheet" type="text/css" href="static/static/css/common.css" />
         <link rel="stylesheet" type="text/css" href="static/static/css/webim.css" />
+        
+        <link rel="stylesheet" type="text/css" href="static/assets/jquery-fileupload/css/jquery.fileupload.css" />
     </head>
     <body>
         <div class="container wraper">
@@ -21,7 +23,8 @@
                             <p class="list-item-name">${user.username}</p>
                         </div>
                     </div>
-                    <div class="panel-body tab-content">
+                    <div class="panel-body im-body">
+                        <div class="im-body-content tab-content">
                         <div id="dialogues" class="tab-pane active"></div>
                         <div id="contacts" class="tab-pane">
                             <ul class="nav nav-justified nav-flat tabs">
@@ -57,6 +60,7 @@
                             </div>
                         </div>
                         <div id="settings" class="tab-pane"></div>
+                        </div>
                     </div>
                     <div class="panel-footer">
                         <ul class="nav nav-justified tabs">
@@ -71,6 +75,7 @@
                 <div class="emotion-panel" style="display: none;">
                     <div class="emotion-content"></div>
                 </div>
+                <div style="display: none;"><input type="file" id="chatFileInput" name="file"></div>
             </div>
         </div>
         
@@ -99,9 +104,18 @@
     <script type="text/javascript" src="static/assets/jquery/jquery-1.11.1.js"></script>
     <script type="text/javascript" src="static/assets/jquery/jquery.form.js"></script>
     <script type="text/javascript" src="static/assets/bootstrap/js/bootstrap.min.js"></script>
-    <!-- 环信webim sdk -->    
+    <!-- 环信webim sdk -->
     <script type="text/javascript" src="static/assets/easymob/strophe-custom-2.0.0.js"></script>
     <script type="text/javascript" src="static/assets/easymob/easemob.im-1.0.5.js"></script>
+    
+    <!-- 滚动条 -->
+    <script type="text/javascript" src="static/assets/easyscroll/js/easyscroll.js"></script>
+    <script type="text/javascript" src="static/assets/easyscroll/js/mousewheel.js"></script>
+    
+    <!-- 文件上传 -->
+    <script type="text/javascript" src="static/assets/jquery-fileupload/js/vendor/jquery.ui.widget.js"></script>
+    <script type="text/javascript" src="static/assets/jquery-fileupload/js/jquery.fileupload.js"></script>
+    <script type="text/javascript" src="static/assets/jquery-fileupload/js/jquery.iframe-transport.js"></script>
     
     <script type="text/javascript" src="static/static/js/Utils.js"></script>
     <script type="text/javascript">
@@ -217,25 +231,40 @@
         	    	$('.chat-textarea', '#chat-window-' + im.chatingUser.userid).val(value + '' + emotion);
         	    }
         	},
+        	createDialogue: function(user, chatUser){  // 创建会话
+        		if(user && user.userid && chatUser && chatUser.userid){
+        			var dialogue = $('#dialogue-' + user.userid + '-' + chatUser.userid, '#dialogues');
+        			if(!dialogue || dialogue.length <= 0){
+        				dialogue = $('<div>', {
+        					id: 'dialogue-' + user.userid + '-' + chatUser.userid,
+        					'class': 'list-item',
+        					html: '<a href="#" class="list-item-avatar"><img src="static/static/img/avatar/roster_avatar_male.png" /></a><p class="list-item-name">' + chatUser.username || '' + '</p>'
+        				}).attr({'data-id': chatUser.userid, 'data-name': chatUser.username, 'data-type': chatUser.type || 'chat'}).click(im.selectedUserToChating).appendTo('#dialogues');
+        			}
+        		}
+        	},
             selectedUserToChating: function(){  // 选择用户进行聊天
             	//当前聊天用户
             	var chatUserId = $(this).attr('data-id');
             	var chatUserName = $(this).attr('data-name');
             	var chatUserType = $(this).attr('data-type');
             	if(chatUserId && chatUserName){
-            		
             		$(this).addClass('active').siblings().removeClass('active');
-            		
             		im.chatingUser = {
             			userid: chatUserId,
+            			username: chatUserName,
             			type: chatUserType || 'user'
             		};
             		im.populateChatWin(chatUserId, chatUserName);
+            		
+            		// 创建会话
+            		im.createDialogue(im.user, im.chatingUser);
             	}
             },
             overChating: function(){  // 结束聊天
             	// 当前聊天窗口
             	$('#chat-window-' + im.chatingUser.userid).hide();
+                im.resetChatingUI();
             	im.chatingUser = {};
         	},
         	sendingMessage: false, // 标志是否正在发送消息
@@ -279,6 +308,8 @@
        		        }
         	    });
         	},
+        	sendFileMessage: function(fileMessage){ // 发送文件消息
+        	},
         	resetChatingUI: function(){  // 重置聊天界面
         		$('.chat-textarea', '#chat-window-' + im.chatingUser.userid).val('');
         	    $('.emotion-panel').hide();
@@ -291,7 +322,7 @@
             		'class': 'chat-message-list-item',
             		html: [$('<p>', {
             			'class': 'datetime',
-            			html: Utils.$datetimeFormat(message.timestamp, 'HH:mm:ss') || ''  //时间格式化
+            			html: Utils.$datetimeFormat(message.timestamp || new Date().getTime(), 'HH:mm:ss') || ''  //时间格式化
             		}), $('<div>', {
             			'class': 'avatar' + ' ' + (message.from == im.user.userid ? 'fr' : 'fl'),
             			html: '<img src="static/static/img/avatar/roster_avatar_male.png" />'
@@ -357,12 +388,35 @@
         	    };
         	    im.sendTextMessage(textMessage);
         	},
+        	onSendFileMessage: function(file){  // 发送文件
+        		console.log(file);
+        	    if(file){
+        	    	var mto = im.chatingUser && im.chatingUser.userid;
+            	    if(!mto){
+            	    	return;
+            	    }
+            	    var fileMessage = {
+            	    	to: mto,
+            	    	type: im.chatingUser.type || 'chat',
+            	    	data: file
+            	    };
+            	    im.sendFileMessage(fileMessage);
+        	    }
+        	},
         	onAddEmotion: function(e){  // 添加表情
         		$('.emotion-panel').toggle();
         	},
         	handleReceiveMessage: function(easemobMessage){  //处理接收的消息
         		// Object {type: "chat", from: "jsyc", to: "anttribe", data: "aBC", ext: {messageId: "0190ddc6a7b44ff5a9d69176ad8cfef8"}}
         		im.appendMessage(easemobMessage);
+        		// 发送人
+        		var from = easemobMessage.from;
+        		if(from && from != im.user.userid){
+        			if(im.chatingUser && im.chatingUser.userid != from){
+        				// 添加会话，消息提醒
+        				im.createDialogue(im.user, {userid: easemobMessage.to, username: easemobMessage.to});
+        			}
+        		}
         	},
         	handleConnOpen: function(){  //连接打开时回调处理
         		//从连接中获取到当前的登录人注册帐号名
@@ -395,7 +449,7 @@
 				    im.handleReceiveMessage(message);
 			    },
 			    onEmotionMessage : function(message) {  //收到表情消息时的回调方法
-				    handleEmotion(message);
+			    	im.handleReceiveMessage(message);
 			    },
 			    onPictureMessage : function(message) { //收到图片消息时的回调方法
 				    handlePictureMessage(message);
@@ -443,6 +497,8 @@
         	});
         	$('.collapse').collapse({});
         	
+        	//$('.im-body-content').scroll_absolute({arrows:true});
+        	
         	// 初始化表情列表
         	im.populateEmotionPanel();
         	
@@ -452,6 +508,35 @@
         	$('.chat-send-btn').click(im.onSendTextMessage);
         	// 添加表情按钮事件处理
         	$('.add-emotion-btn').click(im.onAddEmotion);
+        	// 添加文件按钮
+        	$('.add-file-btn').click(function(){
+        		$('#chatFileInput').click();
+        	});
+        	
+        	// 上传文件
+        	$('input[name="file"]').fileupload({
+    			url : 'fileupload?uploaderConfigKey=chatfiles',
+    			progressall: function(e, data){},
+                done: function (e, data) {
+                	if(data && data.result) {
+    		            try {
+    			            var result = $.parseJSON(data.result);
+    			            if(result.resultCode && result.resultCode == 'FU00001'){
+        			            // 成功处理
+        			            if(result.data){
+        				            $.each(result.data, function (index, item) {
+        				            	// 文件上传成功处理
+    				    				im.onSendFileMessage(item);
+                                    });
+        			            }
+        		            } else if(result.message){
+        		                alert(result.message);
+        		            }
+    			        } catch(er){
+    			        }
+    			    }
+    	        }
+    	    });
         });
     </script>
 </html>

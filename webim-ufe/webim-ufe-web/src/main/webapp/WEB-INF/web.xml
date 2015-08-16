@@ -57,4 +57,18 @@
 		<servlet-name>dispatcherServlet</servlet-name>
 		<url-pattern>/</url-pattern>
 	</servlet-mapping>
+
+	<!-- 文件上传处理 -->
+	<servlet>
+		<servlet-name>fileUpload</servlet-name>
+		<servlet-class>org.anttribe.component.fileupload.FileUploadServlet</servlet-class>
+		<init-param>
+			<param-name>UPLOADERCONFIG</param-name>
+			<param-value>fileuploadConfig.xml</param-value>
+		</init-param>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>fileUpload</servlet-name>
+		<url-pattern>/fileupload</url-pattern>
+	</servlet-mapping>
 </web-app>

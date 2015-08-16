@@ -161,6 +161,11 @@
 				<version>${components.version}</version>
 			</dependency>
 			<dependency>
+				<groupId>org.anttribe.components</groupId>
+				<artifactId>component-fileupload</artifactId>
+				<version>${components.version}</version>
+			</dependency>
+			<dependency>
 				<groupId>org.anttribe.opengadget</groupId>
 				<artifactId>opengadget-core</artifactId>
 				<version>${opengadget.version}</version>
