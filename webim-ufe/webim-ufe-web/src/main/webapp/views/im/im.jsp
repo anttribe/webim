@@ -132,7 +132,26 @@
         		userid: '', 
         		type: ''  // chat/groupchat, 单用户聊天/群组聊天
         	},
-        	messageType: {},
+        	messageType: {
+        		'Text': [],
+        		'Image': ['.png', '.jpg', '.jpeg', '.bpm'],
+        		'Audio': []
+        	},
+        	resolveMessageType: function(suffix){ // 根据后缀获取message类型
+        		if(suffix){
+        			for(var type in im.messageType){
+            			var suffixs = im.messageType[type];
+            			if(suffixs && suffixs.length > 0){
+            				for(var i=0; i<suffixs.length; i++){
+            					var _suffix = suffixs[i];
+            					if(_suffix && suffix == _suffix){
+            						return type;
+            					}
+            				}
+            			}
+            		}
+        		}
+        	},
         	populateRoster: function(){  //构造联系人列表
         		//获取当前登录人的联系人列表
     			im.conn.getRoster({
@@ -207,7 +226,6 @@
         		//聊天窗口标题
         		var $html = '<div class="list-item" data-id="' + chatUserId + '" data-name="' + chatUserName + '"><a href="#" class="list-item-avatar"><img src="static/static/img/avatar/roster_avatar_male.png" /></a><p class="list-item-name">' + chatUserId + '</p></div>';
         		$('.panel-header-title', chatingWindow).html($html);
-        		$(chatingWindow).show().siblings().hide();
         	},
         	populateEmotionPanel: function(){  //构造表情面板
         		// Easemob.im.Helper.EmotionPicData设置表情的json数组
@@ -256,6 +274,7 @@
             			type: chatUserType || 'user'
             		};
             		im.populateChatWin(chatUserId, chatUserName);
+            		$('#chat-window-' + chatUserId).show().siblings().hide();
             		
             		// 创建会话
             		im.createDialogue(im.user, im.chatingUser);
@@ -294,7 +313,7 @@
        		    		    
        		    		    // 设置发送时间
        		    		    $.extend(txtMessage, {data: txtMessage.msg, timestamp: new Date().getTime(), sent: true});
-       		    		    im.appendMessage(txtMessage);
+       		    		    im.appendMessage(txtMessage, txtMessage.to);
        		    		    im.resetChatingUI();
        		    	    }
        		        },
@@ -303,12 +322,72 @@
        		        	// im.conn.sendTextMessage(txtMessage);
        		        	console.log('error');
        		        	$.extend(txtMessage, {data: txtMessage.msg, timestamp: new Date().getTime(), sent: false});
-       		        	im.appendMessage(txtMessage);
+       		        	im.appendMessage(txtMessage, txtMessage.to);
        		        	im.resetChatingUI();
        		        }
         	    });
         	},
         	sendFileMessage: function(fileMessage){ // 发送文件消息
+        		if(im.sendingMessage){
+        			return;
+        		}
+        	    im.sendingMessage = true;
+        	    
+        	    // 添加发送人
+        	    $.extend(fileMessage, { from: im.user.userid });
+        	    // 获取消息类型
+        	    var messageType = im.resolveMessageType(fileMessage.data.type) || 'Text';
+        	    // 发送消息
+        	    $('.chat-form', '#chat-window-' + im.chatingUser.userid).ajaxSubmit({
+        	    	type: 'POST',
+       		        url: 'im/persistent',
+       		        data : {mfrom: fileMessage.from, mto: fileMessage.to, chatType: fileMessage.type, 'messageBodies[0].filename': fileMessage.data.fileName, 'messageBodies[0].filepath': fileMessage.data.filePath, 'messageBodies[0].fileLength': fileMessage.data.size, 'messageBodies[0].type': messageType},
+       		        success: function(result){
+       		    	    // 成功响应
+       		    	    if(result && result['resultCode'] == '000000'){
+       		    		    $.extend(fileMessage, {
+       		    			    ext: {
+       		    				    messageId: result['data']
+       		    			    }
+       		    		    });
+       		    		    
+       		    		    if('Image' == messageType || 'Audio' == messageType){
+       		    		    	$.extend(fileMessage, {
+       		    		    		fileInputId : 'chatFileInput',
+       		    		    		onFileUploadError : function(error) {
+       		    		    			console.log(error);
+       		    		    			$.extend(fileMessage, {timestamp: new Date().getTime(), sent: false});
+       		    		    			im.appendMessage(fileMessage, fileMessage.to);
+       		    		    			im.resetChatingUI();
+   		    						},
+   		    						onFileUploadComplete : function(data) {
+   		    							var file = $('input[name="file"]');
+   		    							if (file && file.length > 0 && file[0].files) {
+   		    								var objectURL = Utils.$objectURL(file[0].files[0]);
+   		    								if (objectURL) {
+   		    									$.extend(fileMessage, {data: [{type: messageType, filepath: objectURL}], timestamp: new Date().getTime(), sent: true});
+   		    									im.appendMessage(fileMessage, fileMessage.to);
+   		    									im.resetChatingUI();
+   		    								}
+   		    							}
+   		    						}
+       		    		    	})
+       		    		    	if('Image' == messageType){
+       		    		    		im.conn.sendPicture(fileMessage);
+       		    		    	} else if('Audio' == messageType){
+       		    		    		im.conn.sendAudio(fileMessage);
+       		    		    	}
+       		    		    }
+       		    	    }
+       		        },
+       		        error: function(){
+       		        	// 如果发送消息失败，标志后台服务有问题，直接发送环信消息
+       		        	console.log('error');
+       		        	$.extend(fileMessage, {timestamp: new Date().getTime(), sent: false});
+       		        	im.appendMessage(fileMessage, fileMessage.to);
+       		        	im.resetChatingUI();
+       		        }
+        	    });
         	},
         	resetChatingUI: function(){  // 重置聊天界面
         		$('.chat-textarea', '#chat-window-' + im.chatingUser.userid).val('');
@@ -317,7 +396,7 @@
         	    	im.sendingMessage = false;
         	    }, 1000);
         	},
-            appendMessage: function(message){  // 将消息添加到展示消息框
+            appendMessage: function(message, chatWindow){  // 将消息添加到展示消息框
             	$('<div>', {
             		'class': 'chat-message-list-item',
             		html: [$('<p>', {
@@ -351,9 +430,11 @@
                                 			// 表情消息
                                 			if (type == 'emotion') {
                                 				$html += '<img class="emotion" src="' + data + '">';
-                                			} else if (type == "pic" || type == 'audio' || type == 'video') {
+                                			} else if (type == 'Image' || type == 'Audio') {
                                 				var filename = messageBody.filename;
-                                				$html += '';
+                                				if(type == 'Image'){
+                                					$html += '<img class="picture" src="' + messageBody.filepath + '">';
+                                				}
                                 			} else {
                                 				$html += '' + data;
                                 			}
@@ -366,10 +447,10 @@
                 			})] 
                 		})
             		})]
-            	}).appendTo($('.chat-message-list', '#chat-window-' + im.chatingUser.userid));
+            	}).appendTo($('.chat-message-list', '#chat-window-' + chatWindow));
             
                 // 滚动到聊天框底部，保证展示最新的消息
-            	$('.chat-message-list', '#chat-window-' + im.chatingUser.userid).scrollTop($('.chat-message-list', '#chat-window-' + im.chatingUser.userid)[0].scrollHeight);
+            	$('.chat-message-list', '#chat-window-' + chatWindow).scrollTop($('.chat-message-list', '#chat-window-' + chatWindow)[0].scrollHeight);
         	},
         	onSendTextMessage: function(e){  // 发送按钮事件
         		var mto = im.chatingUser && im.chatingUser.userid;
@@ -389,7 +470,6 @@
         	    im.sendTextMessage(textMessage);
         	},
         	onSendFileMessage: function(file){  // 发送文件
-        		console.log(file);
         	    if(file){
         	    	var mto = im.chatingUser && im.chatingUser.userid;
             	    if(!mto){
@@ -407,16 +487,45 @@
         		$('.emotion-panel').toggle();
         	},
         	handleReceiveMessage: function(easemobMessage){  //处理接收的消息
-        		// Object {type: "chat", from: "jsyc", to: "anttribe", data: "aBC", ext: {messageId: "0190ddc6a7b44ff5a9d69176ad8cfef8"}}
-        		im.appendMessage(easemobMessage);
         		// 发送人
         		var from = easemobMessage.from;
         		if(from && from != im.user.userid){
         			if(im.chatingUser && im.chatingUser.userid != from){
         				// 添加会话，消息提醒
-        				im.createDialogue(im.user, {userid: easemobMessage.to, username: easemobMessage.to});
+        				im.createDialogue(im.user, {userid: from, username: from});
+        				im.populateChatWin(from, from);
         			}
         		}
+        		// Object {type: "chat", from: "jsyc", to: "anttribe", data: "aBC", ext: {messageId: "0190ddc6a7b44ff5a9d69176ad8cfef8"}}
+        		im.appendMessage(easemobMessage, from);
+        	},
+        	handleReceiveFileMessage: function(easemobMessage){  //处理接收文件的消息
+        	    //easemobwebim-sdk包装的下载文件对象的统一处理方法
+        	    var retryTimes = 0;
+        	    var options = $.extend(easemobMessage, {
+        	    	onFileDownloadComplete: function(response, xhr){
+    		        	var objectURL = Utils.$objectURL(response);
+    		        	console.log(objectURL);
+    				    if (objectURL) {
+    				    	// 根据文件名获取文件后缀
+    				    	var suffix = Utils.$getFileSuffix(easemobMessage.filename);
+    				    	var messageType = im.resolveMessageType(suffix) || 'Text';
+    						$.extend(easemobMessage, {data: [{type: messageType, filepath: objectURL}], timestamp: new Date().getTime()});
+    						im.handleReceiveMessage(easemobMessage);
+    					}
+    		        },
+    		        onFileDownloadError: function(e){
+    		        	// 下载失败时只重新下载一次
+    		            if(retryTimes < 1){
+    		             	retryTimes++;
+    		                options.accessToken = options_c;
+    		                Easemob.im.Helper.download(options);
+    		            } else{
+    		            	retryTimes = 0;
+    		            }
+    		        }
+        	    });
+		        Easemob.im.Helper.download(options);
         	},
         	handleConnOpen: function(){  //连接打开时回调处理
         		//从连接中获取到当前的登录人注册帐号名
@@ -452,20 +561,19 @@
 			    	im.handleReceiveMessage(message);
 			    },
 			    onPictureMessage : function(message) { //收到图片消息时的回调方法
-				    handlePictureMessage(message);
+			    	im.handleReceiveFileMessage(message);
 			    },
 			    onAudioMessage : function(message) {  //收到音频消息的回调方法
-				    handleAudioMessage(message);
+			    	im.handleReceiveFileMessage(message);
 			    },
 			    onLocationMessage : function(message) {  //收到位置消息的回调方法
-				    handleLocationMessage(message);
+			    	im.handleReceiveMessage(message);
 			    },
 			    onFileMessage : function(message) {  //收到文件消息的回调方法
-				    handleFileMessage(message);
+			    	im.handleReceiveFileMessage(message);
 			    },
 			    onVideoMessage : function(message) {  //收到视频消息的回调方法
-			    	console.log(message);
-				    handleVideoMessage(message);
+			    	im.handleReceiveFileMessage(message);
 			    },
 			    onPresence : function(message) {  //收到联系人订阅请求的回调方法
 				    handlePresence(message);
@@ -512,10 +620,10 @@
         	$('.add-file-btn').click(function(){
         		$('#chatFileInput').click();
         	});
-        	
         	// 上传文件
         	$('input[name="file"]').fileupload({
     			url : 'fileupload?uploaderConfigKey=chatfiles',
+    			replaceFileInput: false,
     			progressall: function(e, data){},
                 done: function (e, data) {
                 	if(data && data.result) {

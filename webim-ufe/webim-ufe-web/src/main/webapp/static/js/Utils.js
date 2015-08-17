@@ -226,7 +226,39 @@
                         }
                     }
                 }
-            }
+            },
+            /**
+             * 获取文件后缀
+             * @param filename
+             * @returns
+             */
+            $getFileSuffix: function(filename){
+            	var suffix = '';
+            	if(filename && filename.indexOf('.') > 0){
+            		suffix = filename.substring(filename.lastIndexOf('.'));
+            	}
+            	return suffix;
+            },
+            /**
+             * 文件对象地址
+             * @param file 页面文件
+             */
+            $objectURL: function(file) {
+            	var url = null;
+            	try
+            	{
+            		if (window.createObjectURL) { // basic
+            			url = window.createObjectURL(file);
+            		} else if (window.URL) { // mozilla(firefox)
+            			url = window.URL.createObjectURL(file);
+            		} else if (window.webkitURL) { // webkit or chrome
+            			url = window.webkitURL.createObjectURL(file);
+            		}
+            	} catch(e){
+            		console.log(e);
+            	}
+        		return url;
+        	}
         };
     }();
 
