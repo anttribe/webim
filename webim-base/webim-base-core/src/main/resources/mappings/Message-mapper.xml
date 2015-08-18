@@ -2,6 +2,17 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="org.anttribe.webim.base.core.domain.Message">
 	<cache readOnly="true" />
+	<resultMap id="Message-resultMap-base" type="org.anttribe.webim.base.core.domain.Message">
+		<result property="messageId" column="id" />
+		<result property="mfrom" column="mfrom" />
+		<result property="mto" column="mto" />
+		<result property="chatType" column="chatType" />
+		<result property="mtimestamp" column="mtimestamp" />
+		<result property="bodies" column="msgBodies" />
+		<result property="extParams" column="extParams" />
+		<result property="hxMsgId" column="hxMsgId" />
+	</resultMap>
+	
 	<resultMap id="Message-resultMap" type="org.anttribe.webim.base.core.domain.Message">
 		<result property="messageId" column="id" />
 		<result property="mfrom" column="mfrom" />
@@ -11,6 +22,10 @@
 		<result property="bodies" column="msgBodies" />
 		<result property="extParams" column="extParams" />
 		<result property="hxMsgId" column="hxMsgId" />
+		<collection property="messageBodies" ofType="org.anttribe.webim.base.core.domain.MessageBody"
+			column="{messageId=id}" javaType="ArrayList"
+			select="org.anttribe.webim.base.core.domain.MessageBody.queryByMessage">
+		</collection>
 	</resultMap>
 
 	<!-- insert: 插入单条数据 -->
@@ -61,13 +76,13 @@
 	</update>
 
 	<!-- queryAll: 查询所有数据 -->
-	<select id="queryAll" resultMap="Message-resultMap">
+	<select id="queryAll" resultMap="Message-resultMap-base">
 		<![CDATA[
 		]]>
 	</select>
 
 	<!-- queryById: 根据id查询单条数据 -->
-	<select id="queryById" resultMap="Message-resultMap">
+	<select id="queryById" resultMap="Message-resultMap-base">
 		<![CDATA[
 		]]>
 	</select>
@@ -76,11 +91,26 @@
 	<select id="queryByCriteria" resultMap="Message-resultMap"
 		parameterType="map">
 		<![CDATA[
+		    select id, mfrom, mto, chatType, mtimestamp, msgBodies, extParams, hxMsgId
+		        from t_webim_message 
+		        where 1 = 1 
 		]]>
+		<if test="mfrom != null and mto != null">
+			and ((mfrom = #{mfrom} and mto = #{mto}) or (mfrom = #{mto} and mto = #{mfrom}))
+		</if>
+		<if test="mtimestamp != null">
+			<![CDATA[
+			and mtimestamp < #{mtimestamp}
+			]]>
+		</if>
+		order by mtimestamp desc
+		<if test="limit != 0">
+			limit #{limit,jdbcType=INTEGER}
+		</if>
 	</select>
 
 	<!-- queryHxLastUpdated: 查询最近后一条从环信同步的数据 -->
-	<select id="queryHxLastUpdated" resultMap="Message-resultMap">
+	<select id="queryHxLastUpdated" resultMap="Message-resultMap-base">
 		<![CDATA[
 		    select id, mfrom, mto, chatType, mtimestamp, msgBodies, extParams, hxMsgId
 		        from t_webim_message 

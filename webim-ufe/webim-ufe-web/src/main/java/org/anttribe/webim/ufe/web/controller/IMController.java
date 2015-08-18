@@ -24,6 +24,7 @@ import org.anttribe.webim.base.core.domain.MessageBody;
 import org.anttribe.webim.base.core.domain.MessageType;
 import org.anttribe.webim.base.core.domain.User;
 import org.anttribe.webim.ufe.facade.MessageFacade;
+import org.anttribe.webim.ufe.facade.dto.ChatHistoryDTO;
 import org.anttribe.webim.ufe.web.constants.Constants;
 import org.anttribe.webim.ufe.web.constants.Keys;
 import org.apache.commons.collections.CollectionUtils;
@@ -31,6 +32,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -110,6 +112,44 @@ public class IMController
         catch (Exception e)
         {
             LOGGER.warn("Persistenting message get error: {}", e);
+            result.setResultCode(SystemErrorNumber.SYSTEM_ERROR);
+        }
+        
+        // 加入头信息
+        response.addHeader("Access-Control-Allow-Origin", "*");
+        
+        return result;
+    }
+    
+    /**
+     * 获取聊天记录
+     * 
+     * @param params 参数
+     * @param request HttpServletRequest
+     * @param response HttpServletResponse
+     * @return Result<?>
+     */
+    @RequestMapping("/im/chatHistory")
+    @ResponseBody
+    public Result<?> chatHistory(@ModelAttribute ChatHistoryDTO chatHistoryDTO, HttpServletRequest request, HttpServletResponse response)
+    {
+        Result<List<Message>> result = new Result<List<Message>>();
+        
+        try
+        {
+            List<Message> messageList = messageFacade.queryMessageList(chatHistoryDTO);
+            
+            result.setResultCode(Constants.DEFAULT_SUCCESS_RESULTCODE);
+            result.setData(messageList);
+        }
+        catch (UnifyException e)
+        {
+            LOGGER.warn("Querying messages get error: {}", e.getErrorNo());
+            result.setResultCode(e.getErrorNo());
+        }
+        catch (Exception e)
+        {
+            LOGGER.warn("Querying messages  get error: {}", e);
             result.setResultCode(SystemErrorNumber.SYSTEM_ERROR);
         }
         

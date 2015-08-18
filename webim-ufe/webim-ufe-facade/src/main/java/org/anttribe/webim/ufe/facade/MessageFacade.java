@@ -7,7 +7,10 @@
  */
 package org.anttribe.webim.ufe.facade;
 
+import java.util.List;
+
 import org.anttribe.webim.base.core.domain.Message;
+import org.anttribe.webim.ufe.facade.dto.ChatHistoryDTO;
 
 /**
  * @author zhaoyong
@@ -22,4 +25,12 @@ public interface MessageFacade
      * @return String 消息id
      */
     String persistentMessage(Message message);
+    
+    /**
+     * 查询消息记录数据
+     * 
+     * @param params 参数 {mfrom: "", mto: "", pageSize: "", mtimestamp: ""}
+     * @return List<Message>
+     */
+    List<Message> queryMessageList(ChatHistoryDTO chatHistoryDTO);
 }

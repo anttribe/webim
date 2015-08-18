@@ -7,6 +7,9 @@
  */
 package org.anttribe.webim.base.application;
 
+import java.util.List;
+import java.util.Map;
+
 import org.anttribe.webim.base.core.domain.Message;
 
 /**
@@ -21,4 +24,12 @@ public interface MessageApplication
      * @param messages Message
      */
     void saveMessage(Message... messages);
+    
+    /**
+     * 查询消息记录数据
+     * 
+     * @param params 参数 {mfrom: "", mto: "", pageSize: "", mtimestamp: ""}
+     * @return List<Message>
+     */
+    List<Message> listMessageList(Map<String, Object> params);
 }

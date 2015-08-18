@@ -8,11 +8,13 @@
 package org.anttribe.webim.base.application.impl;
 
 import java.util.List;
+import java.util.Map;
 
 import org.anttribe.webim.base.application.MessageApplication;
 import org.anttribe.webim.base.core.domain.Message;
 import org.anttribe.webim.base.core.domain.MessageBody;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.springframework.stereotype.Service;
 
@@ -45,6 +47,16 @@ public class MessageApplicationImpl implements MessageApplication
                 MessageBody.batchSave(MessageBody.class, messageBodies);
             }
         }
+    }
+    
+    @Override
+    public List<Message> listMessageList(Map<String, Object> params)
+    {
+        if (!MapUtils.isEmpty(params))
+        {
+            return Message.find(Message.class, params);
+        }
+        return null;
     }
     
 }

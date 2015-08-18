@@ -17,6 +17,10 @@
 
 	<dependencies>
 		<dependency>
+			<groupId>cglib</groupId>
+			<artifactId>cglib</artifactId>
+		</dependency>
+		<dependency>
 			<groupId>org.anttribe.webim</groupId>
 			<artifactId>webim-base-infra</artifactId>
 			<version>${project.version}</version>

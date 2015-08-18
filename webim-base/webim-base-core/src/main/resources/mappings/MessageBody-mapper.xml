@@ -19,8 +19,8 @@
 		<result property="address" column="address" />
 		<result property="lat" column="lat" />
 		<result property="lng" column="lng" />
-		<association property="message" column="{id = messageId}"
-			javaType="org.anttribe.webim.base.core.domain.Message" select="org.anttribe.webim.base.core.domain.Message.queryById" />
+<!-- 		<association property="message" column="{id = messageId}" -->
+<!-- 			javaType="org.anttribe.webim.base.core.domain.Message" select="org.anttribe.webim.base.core.domain.Message.queryById" /> -->
 	</resultMap>
 
 	<!-- insert: 插入单条数据 -->
@@ -64,6 +64,16 @@
 	<select id="queryByCriteria" resultMap="MessageBody-resultMap"
 		parameterType="map">
 		<![CDATA[
+		]]>
+	</select>
+	
+	<!-- queryByMessage: 根据message查询数据 -->
+	<select id="queryByMessage" resultMap="MessageBody-resultMap"
+		parameterType="java.util.Map">
+		<![CDATA[
+		select id, type, msg, filename, hxUrl, length, fileLength, secret, hxThumbUrl, thumbSecret, filepath, thumbpath, address, lat, lng, messageId
+		    from t_webim_messagebody
+		    where messageId = #{messageId}
 		]]>
 	</select>
 </mapper>

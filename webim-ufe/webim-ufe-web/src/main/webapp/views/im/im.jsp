@@ -86,6 +86,7 @@
                     <div class="panel-close"><i class="glyphicon glyphicon-remove"></i></div>
                 </div>
                 <div class="panel-body chat-body">
+                    <div class="message-more-btn"><i class="glyphicon glyphicon-time"></i> <span>查看更多消息</span></div>
                     <div class="chat-message-list"></div>
                 </div>
                 <div class="panel-footer">
@@ -285,6 +286,31 @@
             	$('#chat-window-' + im.chatingUser.userid).hide();
                 im.resetChatingUI();
             	im.chatingUser = {};
+        	},
+        	latestMessageTimestamp: new Date().getTime(),  // 最近一条消息的时间戳
+        	showChatHistory: function(e){   // 显示聊天记录消息
+        		if(im.latestMessageTimestamp){
+        			$.ajax({
+        				type: 'POST',
+        				url: 'im/chatHistory',
+        				data: {mfrom: im.user.userid, mto: im.chatingUser.userid, mtimestamp: im.latestMessageTimestamp},
+        				success: function(result){
+        					console.log(result);
+        					if(result && result['resultCode'] == '000000'){
+        						var datas = result['data'];
+        						if(datas){
+        							if(datas.length <= 0){
+        								var target = e.target;
+        								$(target).remove();
+        							} else{
+        							}
+        						}
+        					}
+        				},
+        				error: function(){
+        				}
+        			});
+        		}
         	},
         	sendingMessage: false, // 标志是否正在发送消息
         	sendTextMessage: function(txtMessage){  // 发送文本聊天消息
@@ -612,6 +638,8 @@
         	
         	// 聊天窗口关闭
         	$('.panel-close').click(im.overChating);
+        	// 查看更多消息
+        	$('.message-more-btn').click(im.showChatHistory);
         	// 发送按钮事件
         	$('.chat-send-btn').click(im.onSendTextMessage);
         	// 添加表情按钮事件处理
