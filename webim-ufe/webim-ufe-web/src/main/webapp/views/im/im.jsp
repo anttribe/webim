@@ -328,10 +328,12 @@
        		        data : {mfrom: txtMessage.from, mto: txtMessage.to, chatType: txtMessage.type, 'messageBodies[0].msg': txtMessage.msg, 'messageBodies[0].type': 'Text'},
        		        success: function(result){
        		    	    // 成功响应
-       		    	    if(result && result['resultCode'] == '000000'){
-       		    		    $.extend(txtMessage, {
+       		    	    if(result && result['resultCode'] == '000000' && result['data']){
+       		    		    var message = result['data'];
+       		    	    	$.extend(txtMessage, {
        		    			    ext: {
-       		    				    messageId: result['data']
+       		    			    	timestamp: message['mtimestamp'],
+       		    				    messageId: message['messageId']
        		    			    }
        		    		    });
        		    		    // easemobwebim-sdk发送文本消息的方法 to为发送给谁，meg为文本消息对象
@@ -581,6 +583,8 @@
 				    handleClosed();
 			    },
 			    onTextMessage : function(message) {  //收到文本消息时的回调方法
+			    	console.log(message);
+			    
 				    im.handleReceiveMessage(message);
 			    },
 			    onEmotionMessage : function(message) {  //收到表情消息时的回调方法

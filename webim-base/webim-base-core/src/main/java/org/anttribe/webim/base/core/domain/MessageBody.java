@@ -9,6 +9,8 @@ package org.anttribe.webim.base.core.domain;
 
 import org.anttribe.opengadget.core.domain.MybatisAbstractEntity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 /**
  * @author zhaoyong
  * @version 2015年8月3日
@@ -23,6 +25,7 @@ public class MessageBody extends MybatisAbstractEntity
     /**
      * 所属消息
      */
+    @JsonIgnore
     private Message message;
     
     /**

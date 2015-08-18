@@ -77,7 +77,7 @@ public class IMController
         @RequestParam(value = "file", required = false) MultipartFile file, HttpServletRequest request,
         HttpServletResponse response)
     {
-        Result<String> result = new Result<String>();
+        Result<Message> result = new Result<Message>();
         
         List<MessageBody> messageBodies = message.getMessageBodies();
         if (CollectionUtils.isEmpty(messageBodies))
@@ -99,10 +99,10 @@ public class IMController
         
         try
         {
-            String messageId = messageFacade.persistentMessage(message);
+            message = messageFacade.persistentMessage(message);
             
             result.setResultCode(Constants.DEFAULT_SUCCESS_RESULTCODE);
-            result.setData(messageId);
+            result.setData(message);
         }
         catch (UnifyException e)
         {
@@ -131,7 +131,8 @@ public class IMController
      */
     @RequestMapping("/im/chatHistory")
     @ResponseBody
-    public Result<?> chatHistory(@ModelAttribute ChatHistoryDTO chatHistoryDTO, HttpServletRequest request, HttpServletResponse response)
+    public Result<?> chatHistory(@ModelAttribute ChatHistoryDTO chatHistoryDTO, HttpServletRequest request,
+        HttpServletResponse response)
     {
         Result<List<Message>> result = new Result<List<Message>>();
         

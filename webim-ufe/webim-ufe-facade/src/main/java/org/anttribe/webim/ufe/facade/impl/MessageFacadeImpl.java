@@ -48,7 +48,7 @@ public class MessageFacadeImpl implements MessageFacade
     private MessageApplication messageApplication;
     
     @Override
-    public String persistentMessage(Message message)
+    public Message persistentMessage(Message message)
     {
         if (null == message)
         {
@@ -81,7 +81,7 @@ public class MessageFacadeImpl implements MessageFacade
         }
         messageApplication.saveMessage(message);
         
-        return message.getMessageId();
+        return message;
     }
     
     @Override

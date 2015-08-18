@@ -24,7 +24,7 @@ public interface MessageFacade
      * @param message Message
      * @return String 消息id
      */
-    String persistentMessage(Message message);
+    Message persistentMessage(Message message);
     
     /**
      * 查询消息记录数据

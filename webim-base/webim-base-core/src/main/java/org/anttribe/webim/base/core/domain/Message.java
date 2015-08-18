@@ -11,6 +11,8 @@ import java.util.List;
 
 import org.anttribe.opengadget.core.domain.MybatisAbstractEntity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 /**
  * @author zhaoyong
  * @version 2015年8月3日
@@ -67,7 +69,7 @@ public class Message extends MybatisAbstractEntity
      * 
      * @return Message
      */
-    public static Message fintHxLastUpdatedMessage()
+    public static Message findHxLastUpdatedMessage()
     {
         String statement =
             (new StringBuilder()).append(Message.class.getCanonicalName()).append(".queryHxLastUpdated").toString();
