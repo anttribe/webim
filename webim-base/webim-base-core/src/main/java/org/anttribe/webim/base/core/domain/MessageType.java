@@ -42,6 +42,14 @@ public enum MessageType
         {
             return null;
         }
+    },
+    File()
+    {
+        @Override
+        public ObjectNode populateMessageBody(MessageBody messageBody)
+        {
+            return null;
+        }
     };
     
     private static final JsonNodeFactory factory = new JsonNodeFactory(false);

@@ -1753,6 +1753,40 @@ connection.prototype.sendAudioMessage = function(options) {
 	}).c("body").t(jsonstr);
 	this.sendCommand(dom.tree());
 };
+connection.prototype.sendFile = function(options) {
+	var onerror =  options.onFileUploadError || this.onError || emptyFn;
+	if(!isCanUploadFile){
+	  onerror({
+			type : EASEMOB_IM_UPLOADFILE_BROWSER_ERROR,
+			msg : '当前浏览器不支持异步上传文件,请换用其他浏览器'
+		});
+	  return;
+	}
+	var conn = this;
+	var onFileUploadComplete = options.onFileUploadComplete || emptyFn;
+	var myonComplete = function(data) {
+		onFileUploadComplete(data);
+		options["url"] = data.uri;
+		options["secret"] = data.entities[0]["share-secret"];
+		if(data.entities[0]["file-metadata"]){
+			options["file_length"] = data.entities[0]["file-metadata"]["content-length"];
+			options["filetype"] = data.entities[0]["file-metadata"]["content-type"];
+		}
+		options["uuid"] = data.entities[0].uuid;
+		options["length"] = data.duration;
+		conn.sendFileMessage(options);
+	};
+	options.appName = this.context.appName || '';
+	options.orgName = this.context.orgName || '';
+	options.accessToken = this.context.accessToken || '';
+	options.onFileUploadComplete = myonComplete;
+			
+	var file = getFileUrlFn(options.fileInputId);
+	options.fileInfo = file;
+	options.filename = file.filename;
+	
+	uploadFn(options, this);
+};
 connection.prototype.sendFileMessage = function(options) {
 	var appKey = this.context.appKey || '';
 	var toJid = appKey + "_" + options.to + "@"	+ this.domain;

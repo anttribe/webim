@@ -136,7 +136,8 @@
         	messageType: {
         		'Text': [],
         		'Image': ['.png', '.jpg', '.jpeg', '.bpm', 'gif'],
-        		'Audio': []
+        		'Audio': [],
+        		'File': ['.doc', '.docx', '.pdf']
         	},
         	resolveMessageType: function(suffix){ // 根据后缀获取message类型
         		if(suffix){
@@ -305,7 +306,7 @@
     								$(target).remove();
     							} else{
     								// 将数据按照时间排序
-    								var messages = {}, messageTimestamp = [];
+    								var messages = {}, messageTimestamps = [];
     								for(var i=0; i<datas.length; i++){
     									var message = datas[i];
     									if(!message){
@@ -320,11 +321,11 @@
 									    		if(bodies && bodies.length>0){
 									    			for(var j=0; j<bodies.length; j++){
 									    				var body = bodies[j];
-									    				if(body && body.type){
-									    					if(body.type == 'Text'){
+									    				if(body){
+									    					if(body.msg){
 									    						return body.msg;
-									    					} else if(body.type == 'Image' || body.type == 'Audio'){
-									    						data.push({type: body.type, filepath: body.filepath});
+									    					} else if(body.filepath){
+									    						data.push({type: body.type, filepath: body.filepath, filename: body.filename});
 									    					}
 									    				}
 									    			}
@@ -340,20 +341,25 @@
     										messages[timestamp] = [];
     									}
     									messages[timestamp].push(message);
-    									messageTimestamp.push(message.mtimestamp);
+    									messageTimestamps.push(timestamp);
     								}
-    								// 消息时间戳按照
-    								messageTimestamp.sort();
-    								for(var t in messages){
-    									var tempMessages = messages[t];
-    									$.each(tempMessages, function(i, message){
-    										im.appendMessage(message, (message.mfrom == im.user.userid ? message.mto : message.mfrom), -1);
-    									});
+    								
+    								// 消息时间戳按照从大到小排序
+    								messageTimestamps.sort(function(a, b){
+    									return b - a;
+    								});
+    								for(var i=0; i<messageTimestamps.length; i++){
+    									var timestamp = messageTimestamps[i];
+    									if(timestamp){
+    										var tempMessages = messages[timestamp];
+        									$.each(tempMessages, function(i, message){
+        										im.appendMessage(message, (message.mfrom == im.user.userid ? message.mto : message.mfrom), -1);
+        									});
+    									}
     								}
     								
     								// 取最小的时间戳
-    								var minTimestap = messageTimestamp[messageTimestamp.length - 1];
-    								im.latestMessageTimestamp = minTimestap;
+    								im.latestMessageTimestamp = messageTimestamps[messageTimestamps.length - 1];
     							}
         					}
         				},
@@ -430,7 +436,7 @@
        		    			    }
        		    		    });
        		    		    
-       		    		    if('Image' == messageType || 'Audio' == messageType){
+       		    		    if('Image' == messageType || 'Audio' == messageType || 'File' == messageType){
        		    		    	$.extend(fileMessage, {
        		    		    		fileInputId : 'chatFileInput',
        		    		    		onFileUploadError : function(error) {
@@ -444,17 +450,20 @@
    		    							if (file && file.length > 0 && file[0].files) {
    		    								var objectURL = Utils.$objectURL(file[0].files[0]);
    		    								if (objectURL) {
-   		    									$.extend(fileMessage, {data: [{type: messageType, filepath: objectURL}], sent: true});
+   		    									$.extend(fileMessage, {data: [{type: messageType, filepath: objectURL, filename: fileMessage.data.fileName || ''}], sent: true});
    		    									im.appendMessage(fileMessage, fileMessage.to);
    		    									im.resetChatingUI();
    		    								}
    		    							}
    		    						}
        		    		    	})
+       		    		    	
        		    		    	if('Image' == messageType){
        		    		    		im.conn.sendPicture(fileMessage);
        		    		    	} else if('Audio' == messageType){
        		    		    		im.conn.sendAudio(fileMessage);
+       		    		    	} else{
+       		    		    		im.conn.sendFile(fileMessage);
        		    		    	}
        		    		    }
        		    	    }
@@ -501,22 +510,27 @@
                                 		} else{
                                 			localeMessage = message.data;
                                 		}
+                                		
                                 		var messageBodies = localeMessage;
-                                		for (var i = 0; i < messageBodies.length; i++) {
-                                			var messageBody = messageBodies[i];
-                                			var type = messageBody.type;
-                                			var data = messageBody.data;
-                                			// 表情消息
-                                			if (type == 'emotion') {
-                                				$html += '<img class="emotion" src="' + data + '">';
-                                			} else if (type == 'Image' || type == 'Audio') {
-                                				var filename = messageBody.filename;
-                                				if(type == 'Image'){
-                                					$html += '<img class="picture" src="' + messageBody.filepath + '">';
-                                				}
-                                			} else {
-                                				$html += '' + data;
-                                			}
+                                		if(messageBodies){
+                                			for (var i = 0; i < messageBodies.length; i++) {
+                                    			var messageBody = messageBodies[i];
+                                    			var type = messageBody.type;
+                                    			var data = messageBody.data;
+                                    			// 表情消息
+                                    			if (type == 'emotion') {
+                                    				$html += '<img class="emotion" src="' + (data || '') + '">';
+                                    			} else if (type == 'Image' || type == 'Audio' || type == 'File') {
+                                    				var filename = messageBody.filename;
+                                    				if(type == 'Image'){
+                                    					$html += '<img class="picture" src="' + messageBody.filepath + '">';
+                                    				} else{
+                                    					$html += '' + ('<a target="_blank" href="' + messageBody.filepath + '">' + filename + '</a>' || '');
+                                    				}
+                                    			} else {
+                                    				$html += '' + (data || '');
+                                    			}
+                                    		}
                                 		}
                                 	}
                     				return $html;
@@ -595,8 +609,8 @@
     				    if (objectURL) {
     				    	// 根据文件名获取文件后缀
     				    	var suffix = Utils.$getFileSuffix(easemobMessage.filename);
-    				    	var messageType = im.resolveMessageType(suffix) || 'Text';
-    						$.extend(easemobMessage, {data: [{type: messageType, filepath: objectURL}]});
+    				    	var messageType = im.resolveMessageType(suffix) || 'File';
+    						$.extend(easemobMessage, {data: [{type: messageType, filepath: objectURL, filename: easemobMessage.filename}]});
     						im.handleReceiveMessage(easemobMessage);
     					}
     		        },
