@@ -56,6 +56,7 @@ public class IMController
     {
         ModelAndView mv = new ModelAndView();
         mv.addObject("hxAppKey", Global.me().getString("hx.APPKEY"));
+        mv.addObject("timstampSpacing", Global.me().getString("message.timestamp.spacing"));
         mv.addObject("user", (User)httpSession.getAttribute(Keys.USER_SESSION));
         mv.setViewName("/im/im");
         

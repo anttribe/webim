@@ -121,7 +121,10 @@
     <script type="text/javascript" src="static/static/js/Utils.js"></script>
     <script type="text/javascript">
         var im = im || {
-        	hxAppKey: '${hxAppKey}',
+        	config: {
+        		hxAppKey: '${hxAppKey}',
+        		timstampSpacing: Number('${timstampSpacing}')
+        	},
         	conn: null,  // 环信连接对象
         	user: {  // 当前用户对象
         		userid: '',
@@ -290,6 +293,7 @@
         	},
         	latestMessageTimestamp: new Date().getTime(),  // 最近一条消息的时间戳
         	showChatHistory: function(e){   // 显示聊天记录消息
+        		var that = this;
         		if(im.latestMessageTimestamp){
         			$.ajax({
         				type: 'POST',
@@ -302,8 +306,7 @@
         							return;
         						}
         						if(datas.length <= 0){
-    								var target = e.target;
-    								$(target).remove();
+    								$(that).remove();
     							} else{
     								// 将数据按照时间排序
     								var messages = {}, messageTimestamps = [];
@@ -489,7 +492,26 @@
             		'class': 'chat-message-list-item',
             		html: [$('<p>', {
             			'class': 'datetime',
-            			html: Utils.$datetimeFormat((message.ext && message.ext.timestamp) || new Date().getTime(), 'yyyy-MM-dd HH:mm:ss') || ''  //时间格式化
+            			'data-time': (message.ext && message.ext.timestamp) || new Date().getTime(),
+            			html: function(){
+            				var mtimestamp = (message.ext && message.ext.timestamp) || new Date().getTime();
+            				// 获取前一条消息的timestamp，如果在显示间隔之类，则不显示时间
+            				var datetime = null;
+            				if(direction < 0){
+            					datetime = $('.datetime', $('.chat-message-list-item:first', $('.chat-message-list', '#chat-window-' + chatWindow)));
+            				} else{
+            					datetime = $('.datetime', $('.chat-message-list-item:last', $('.chat-message-list', '#chat-window-' + chatWindow)));
+            				}
+            				if(datetime && datetime.length > 0){
+            					var prevTimestamp = $(datetime).attr('data-time');
+            					// 超时显示间隔之后，显示时间
+            					if(prevTimestamp && (Number(prevTimestamp) + Number(im.config.timstampSpacing)) < mtimestamp){
+            						return Utils.$datetimeFormat((message.ext && message.ext.timestamp) || new Date().getTime(), 'HH:mm:ss') || '';
+            					}
+            				} else{
+            					return Utils.$datetimeFormat((message.ext && message.ext.timestamp) || new Date().getTime(), 'HH:mm:ss') || '';
+            				}
+            			}
             		}), $('<div>', {
             			'class': 'avatar' + ' ' + (message.from == im.user.userid ? 'fr' : 'fl'),
             			html: '<img src="static/static/img/avatar/roster_avatar_male.png" />'
@@ -695,7 +717,7 @@
 			im.conn.open({
 				user: im.user.username,
 				pwd: im.user.password,
-				appKey: im.hxAppKey  //连接时提供appkey
+				appKey: im.config.hxAppKey  //连接时提供appkey
 			});
 	    });
     </script>
