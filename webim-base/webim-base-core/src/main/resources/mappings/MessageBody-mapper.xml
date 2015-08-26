@@ -4,29 +4,29 @@
 	<cache readOnly="true" />
 	<resultMap id="MessageBody-resultMap"
 		type="org.anttribe.webim.base.core.domain.MessageBody">
-		<result property="id" column="id" />
-		<result property="type" column="type" />
+		<result property="messageBodyId" column="id" />
+		<result property="messageType" column="messate_type" />
 		<result property="msg" column="msg" />
 		<result property="filename" column="filename" />
-		<result property="hxUrl" column="hxUrl" />
-		<result property="length" column="length" />
-		<result property="fileLength" column="fileLength" />
+		<result property="hxFileUrl" column="hx_file_url" />
+		<result property="duration" column="duration" />
+		<result property="fileLength" column="file_length" />
 		<result property="secret" column="secret" />
-		<result property="hxThumbUrl" column="hxThumbUrl" />
-		<result property="thumbSecret" column="thumbSecret" />
+		<result property="hxThumbUrl" column="hx_thumb_url" />
+		<result property="thumbSecret" column="thumb_secret" />
 		<result property="filepath" column="filepath" />
 		<result property="thumbpath" column="thumbpath" />
 		<result property="address" column="address" />
 		<result property="lat" column="lat" />
 		<result property="lng" column="lng" />
-<!-- 		<association property="message" column="{id = messageId}" -->
+<!-- 		<association property="message" column="{id = message_id}" -->
 <!-- 			javaType="org.anttribe.webim.base.core.domain.Message" select="org.anttribe.webim.base.core.domain.Message.queryById" /> -->
 	</resultMap>
 
 	<!-- insert: 插入单条数据 -->
 	<insert id="insert" parameterType="org.anttribe.webim.base.core.domain.MessageBody">
 		<![CDATA[
-		insert into t_webim_messagebody(id, type, msg, filename, hxUrl, length, fileLength, secret, hxThumbUrl, thumbSecret, filepath, thumbpath, address, lat, lng, messageId)
+		insert into t_webim_messagebody(id, messate_type, msg, filename, hx_file_url, duration, file_length, secret, hx_thumb_url, thumb_secret, filepath, thumbpath, address, lat, lng, message_id)
 		    values(#{id}, #{type}, #{msg}, #{filename}, #{hxUrl}, #{length}, #{fileLength}, #{secret}, #{hxThumbUrl}, #{thumbSecret}, #{filepath}, #{thumbpath}, #{address}, #{lat}, #{lng}, #{message.messageId})
 		]]>
 	</insert>
@@ -34,7 +34,7 @@
 	<!-- batchInsert: 批量插入数据 -->
 	<insert id="batchInsert" parameterType="java.util.List">
 		<![CDATA[
-		insert into t_webim_messagebody(id, type, msg, filename, hxUrl, length, fileLength, secret, hxThumbUrl, thumbSecret, filepath, thumbpath, address, lat, lng, messageId)
+		insert into t_webim_messagebody(id, messate_type, msg, filename, hx_file_url, duration, file_length, secret, hx_thumb_url, thumb_secret, filepath, thumbpath, address, lat, lng, message_id)
 		values
 		]]>
 		<foreach collection="list" item="item" separator=", ">
@@ -71,9 +71,9 @@
 	<select id="queryByMessage" resultMap="MessageBody-resultMap"
 		parameterType="java.util.Map">
 		<![CDATA[
-		select id, type, msg, filename, hxUrl, length, fileLength, secret, hxThumbUrl, thumbSecret, filepath, thumbpath, address, lat, lng, messageId
+		select id, messate_type, msg, filename, hx_file_url, duration, file_length, secret, hx_thumb_url, thumb_secret, filepath, thumbpath, address, lat, lng, message_id
 		    from t_webim_messagebody
-		    where messageId = #{messageId}
+		    where message_id = #{messageId}
 		]]>
 	</select>
 </mapper>

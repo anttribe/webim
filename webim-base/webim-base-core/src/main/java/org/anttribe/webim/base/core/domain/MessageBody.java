@@ -18,9 +18,9 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 public class MessageBody extends MybatisAbstractEntity
 {
     /**
-     * id
+     * messageBodyId
      */
-    private String id;
+    private String messageBodyId;
     
     /**
      * 所属消息
@@ -31,7 +31,7 @@ public class MessageBody extends MybatisAbstractEntity
     /**
      * 消息类型
      */
-    private MessageType type = MessageType.Text;
+    private MessageType messageType = MessageType.Text;
     
     /**
      * 文本消息的消息内容
@@ -46,12 +46,12 @@ public class MessageBody extends MybatisAbstractEntity
     /**
      * 媒体消息的文件url
      */
-    private String hxUrl;
+    private String hxFileUrl;
     
     /**
      * 语音视频等时长(秒)
      */
-    private long length;
+    private long duration;
     
     /**
      * 文件长度
@@ -97,162 +97,162 @@ public class MessageBody extends MybatisAbstractEntity
      * 经度
      */
     private String lng;
-    
-    public String getId()
+
+    public String getMessageBodyId()
     {
-        return id;
+        return messageBodyId;
     }
-    
-    public void setId(String id)
+
+    public void setMessageBodyId(String messageBodyId)
     {
-        this.id = id;
+        this.messageBodyId = messageBodyId;
     }
-    
+
     public Message getMessage()
     {
         return message;
     }
-    
+
     public void setMessage(Message message)
     {
         this.message = message;
     }
-    
-    public MessageType getType()
+
+    public MessageType getMessageType()
     {
-        return type;
+        return messageType;
     }
-    
-    public void setType(MessageType type)
+
+    public void setMessageType(MessageType messageType)
     {
-        this.type = type;
+        this.messageType = messageType;
     }
-    
+
     public String getMsg()
     {
         return msg;
     }
-    
+
     public void setMsg(String msg)
     {
         this.msg = msg;
     }
-    
+
     public String getFilename()
     {
         return filename;
     }
-    
+
     public void setFilename(String filename)
     {
         this.filename = filename;
     }
-    
-    public String getHxUrl()
+
+    public String getHxFileUrl()
     {
-        return hxUrl;
+        return hxFileUrl;
     }
-    
-    public void setHxUrl(String hxUrl)
+
+    public void setHxFileUrl(String hxFileUrl)
     {
-        this.hxUrl = hxUrl;
+        this.hxFileUrl = hxFileUrl;
     }
-    
-    public long getLength()
+
+    public long getDuration()
     {
-        return length;
+        return duration;
     }
-    
-    public void setLength(long length)
+
+    public void setDuration(long duration)
     {
-        this.length = length;
+        this.duration = duration;
     }
-    
+
     public long getFileLength()
     {
         return fileLength;
     }
-    
+
     public void setFileLength(long fileLength)
     {
         this.fileLength = fileLength;
     }
-    
+
     public String getSecret()
     {
         return secret;
     }
-    
+
     public void setSecret(String secret)
     {
         this.secret = secret;
     }
-    
+
     public String getHxThumbUrl()
     {
         return hxThumbUrl;
     }
-    
+
     public void setHxThumbUrl(String hxThumbUrl)
     {
         this.hxThumbUrl = hxThumbUrl;
     }
-    
+
     public String getThumbSecret()
     {
         return thumbSecret;
     }
-    
+
     public void setThumbSecret(String thumbSecret)
     {
         this.thumbSecret = thumbSecret;
     }
-    
+
     public String getFilepath()
     {
         return filepath;
     }
-    
+
     public void setFilepath(String filepath)
     {
         this.filepath = filepath;
     }
-    
+
     public String getThumbpath()
     {
         return thumbpath;
     }
-    
+
     public void setThumbpath(String thumbpath)
     {
         this.thumbpath = thumbpath;
     }
-    
+
     public String getAddress()
     {
         return address;
     }
-    
+
     public void setAddress(String address)
     {
         this.address = address;
     }
-    
+
     public String getLat()
     {
         return lat;
     }
-    
+
     public void setLat(String lat)
     {
         this.lat = lat;
     }
-    
+
     public String getLng()
     {
         return lng;
     }
-    
+
     public void setLng(String lng)
     {
         this.lng = lng;

@@ -78,6 +78,11 @@ public class User extends MybatisAbstractEntity
     private boolean available;
     
     /**
+     * 环信用户名
+     */
+    private String hxUsername;
+    
+    /**
      * 环信的用户密码
      */
     private String hxPassword;
@@ -223,5 +228,15 @@ public class User extends MybatisAbstractEntity
     public void setHxPassword(String hxPassword)
     {
         this.hxPassword = hxPassword;
+    }
+
+    public String getHxUsername()
+    {
+        return hxUsername;
+    }
+
+    public void setHxUsername(String hxUsername)
+    {
+        this.hxUsername = hxUsername;
     }
 }

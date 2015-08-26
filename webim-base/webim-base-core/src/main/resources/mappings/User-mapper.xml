@@ -3,7 +3,7 @@
 <mapper namespace="org.anttribe.webim.base.core.domain.User">
 	<cache readOnly="true" />
 	<resultMap id="User-resultMap" type="org.anttribe.webim.base.core.domain.User">
-		<result property="userId" column="userId" />
+		<result property="userId" column="id" />
 		<result property="username" column="username" />
 		<result property="password" column="password" />
 		<result property="nickname" column="nickname" />
@@ -11,11 +11,12 @@
 		<result property="mobile" column="mobile" />
 		<result property="avatar" column="avatar" />
 		<result property="signature" column="signature" />
-		<result property="createTime" column="createTime" />
-		<result property="updateTime" column="updateTime" />
-		<result property="latestLoginTime" column="latestLoginTime" />
+		<result property="createTime" column="create_time" />
+		<result property="updateTime" column="update_time" />
+		<result property="latestLoginTime" column="latest_login_time" />
 		<result property="available" column="available" jdbcType="BOOLEAN" />
-		<result property="hxPassword" column="hxPassword" />
+		<result property="hxUsername" column="hx_username" />
+		<result property="hxPassword" column="hx_password" />
 	</resultMap>
 
 	<!-- update: 更新用户信息 -->
@@ -30,15 +31,15 @@
 			<if test="null != avatar and '' != avatar">avatar = #{avatar},</if>
 			<if test="null != signature and '' != signature">signature = #{signature}</if>
 		</set>
-		WHERE userId = #{userId}
+		WHERE id = #{userId}
 	</update>
 
 	<!-- queryById: 根据id查询数据 -->
 	<select id="queryById" resultMap="User-resultMap" parameterType="map">
 		<![CDATA[
-		SELECT userId, username, password, nickname, email, mobile, avatar, signature, createTime, updateTime, latestLoginTime, available, hxPassword
+		SELECT id, username, password, nickname, email, mobile, avatar, signature, create_time, update_time, latest_login_time, available, hx_username, hx_password
 		    FROM t_webim_user t
-		        WHERE t.userId = #{userId}
+		        WHERE t.id = #{userId}
 		]]>
 	</select>
 
@@ -46,7 +47,7 @@
 	<select id="queryByCriteria" resultMap="User-resultMap"
 		parameterType="map">
 		<![CDATA[
-		SELECT userId, username, password, nickname, email, mobile, avatar, signature, createTime, updateTime, latestLoginTime, available, hxPassword
+		SELECT id, username, password, nickname, email, mobile, avatar, signature, create_time, update_time, latest_login_time, available, hx_username, hx_password
 		    FROM t_webim_user t
 		        WHERE t.username = #{userAccount}
 		           OR t.email = #{userAccount}
@@ -60,7 +61,7 @@
 	<select id="queryByUserAccount" resultMap="User-resultMap"
 		parameterType="java.lang.String">
 		<![CDATA[
-		SELECT userId, username, password, nickname, email, mobile, avatar, signature, createTime, updateTime, latestLoginTime, available, hxPassword
+		SELECT id, username, password, nickname, email, mobile, avatar, signature, create_time, update_time, latest_login_time, available, hx_username, hx_password
 		    FROM t_webim_user t
 		        WHERE t.username = #{userAccount}
 		           OR t.email = #{userAccount}

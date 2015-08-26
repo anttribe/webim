@@ -6,22 +6,24 @@
 		<result property="messageId" column="id" />
 		<result property="mfrom" column="mfrom" />
 		<result property="mto" column="mto" />
-		<result property="chatType" column="chatType" />
+		<result property="chatType" column="chat_type" />
 		<result property="mtimestamp" column="mtimestamp" />
-		<result property="bodies" column="msgBodies" />
-		<result property="extParams" column="extParams" />
-		<result property="hxMsgId" column="hxMsgId" />
+		<result property="bodies" column="msg_bodies" />
+		<result property="extParams" column="ext_params" />
+		<result property="hxMsgId" column="hx_msg_id" />
+		<result property="createMonth" column="create_month" />
 	</resultMap>
 	
 	<resultMap id="Message-resultMap" type="org.anttribe.webim.base.core.domain.Message">
 		<result property="messageId" column="id" />
 		<result property="mfrom" column="mfrom" />
 		<result property="mto" column="mto" />
-		<result property="chatType" column="chatType" />
+		<result property="chatType" column="chat_type" />
 		<result property="mtimestamp" column="mtimestamp" />
-		<result property="bodies" column="msgBodies" />
-		<result property="extParams" column="extParams" />
-		<result property="hxMsgId" column="hxMsgId" />
+		<result property="bodies" column="msg_bodies" />
+		<result property="extParams" column="ext_params" />
+		<result property="hxMsgId" column="hx_msg_id" />
+		<result property="createMonth" column="create_month" />
 		<collection property="messageBodies" ofType="org.anttribe.webim.base.core.domain.MessageBody"
 			column="{messageId=id}" javaType="ArrayList"
 			select="org.anttribe.webim.base.core.domain.MessageBody.queryByMessage">
@@ -31,8 +33,8 @@
 	<!-- insert: 插入单条数据 -->
 	<insert id="insert" parameterType="org.anttribe.webim.base.core.domain.Message">
 		<![CDATA[
-		insert into t_webim_message(id, mfrom, mto, chatType, mtimestamp, msgBodies, extParams, hxMsgId)
-		    values(#{messageId}, #{mfrom}, #{mto}, #{chatType}, #{mtimestamp}, #{bodies}, #{extParams}, #{hxMsgId})
+		insert into t_webim_message(id, mfrom, mto, chat_type, mtimestamp, msg_bodies, ext_params, hx_msg_id, create_month)
+		    values(#{messageId}, #{mfrom}, #{mto}, #{chatType}, #{mtimestamp}, #{bodies}, #{extParams}, #{hxMsgId}, #{createMonth})
 		]]>
 	</insert>
 
@@ -47,21 +49,21 @@
                      </if>
                  </foreach>
               </trim>
-              <trim prefix="msgBodies = case id" suffix="end,">
+              <trim prefix="msg_bodies = case id" suffix="end,">
                  <foreach collection="list" item="item">
                      <if test="item.bodies != null">
                          when #{item.messageId} then #{item.bodies}
                      </if>
                  </foreach>
               </trim>
-              <trim prefix="extParams = case id" suffix="end,">
+              <trim prefix="ext_params = case id" suffix="end,">
                  <foreach collection="list" item="item">
                      <if test="item.extParams != null">
                          when #{item.messageId} then #{item.extParams}
                      </if>
                  </foreach>
               </trim>
-              <trim prefix="hxMsgId = case id" suffix="end,">
+              <trim prefix="hx_msg_id = case id" suffix="end,">
                  <foreach collection="list" item="item">
                      <if test="item.hxMsgId != null">
                          when #{item.messageId} then #{item.hxMsgId}
@@ -91,7 +93,7 @@
 	<select id="queryByCriteria" resultMap="Message-resultMap"
 		parameterType="map">
 		<![CDATA[
-		    select id, mfrom, mto, chatType, mtimestamp, msgBodies, extParams, hxMsgId
+		    select id, mfrom, mto, chat_type, mtimestamp, msg_bodies, ext_params, hx_msg_id, create_month
 		        from t_webim_message 
 		        where 1 = 1 
 		]]>
@@ -112,9 +114,9 @@
 	<!-- queryHxLastUpdated: 查询最近后一条从环信同步的数据 -->
 	<select id="queryHxLastUpdated" resultMap="Message-resultMap-base">
 		<![CDATA[
-		    select id, mfrom, mto, chatType, mtimestamp, msgBodies, extParams, hxMsgId
+		    select id, mfrom, mto, chat_type, mtimestamp, msg_bodies, ext_params, hx_msg_id, create_month
 		        from t_webim_message 
-		        where hxMsgId is not null
+		        where hx_msg_id is not null
 		        order by mtimestamp desc
 		        limit 1
 		]]>

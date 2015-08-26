@@ -28,19 +28,19 @@ CREATE TABLE `t_webim_user` (
   `mobile` varchar(32) DEFAULT NULL COMMENT '用户联系电话',
   `avatar` varchar(256) DEFAULT NULL COMMENT '用户头像',
   `signature` varchar(256) DEFAULT NULL COMMENT '个人签名',
-  `createTime` timestamp NULL DEFAULT NULL COMMENT '创建时间',
-  `updateTime` timestamp NULL DEFAULT NULL COMMENT '数据更新时间',
-  `latestLoginTime` timestamp NULL DEFAULT NULL COMMENT '用户最后一次登录时间',
+  `create_time` timestamp NULL DEFAULT NULL COMMENT '创建时间',
+  `update_time` timestamp NULL DEFAULT NULL COMMENT '数据更新时间',
+  `latest_login_time` timestamp NULL DEFAULT NULL COMMENT '用户最后一次登录时间',
   `available` varchar(8) DEFAULT '1' COMMENT '是否启用 0:禁用; 1:启用',
-  `hxUsername` varchar(256) NOT NULL COMMENT '环信用户名称',
-  `hxPassword` varchar(128) NOT NULL COMMENT '环信用户密码',
+  `hx_username` varchar(256) NOT NULL COMMENT '环信用户名称',
+  `hx_password` varchar(128) NOT NULL COMMENT '环信用户密码',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Records of t_webim_user
 -- ----------------------------
-INSERT INTO `t_webim_user`(`id`, `username`, `password`, `nickname`, `email`, `mobile`, `avatar`, `signature`, `createTime`, `updateTime`, `latestLoginTime`, `available`, `hxUsername`, `hxPassword`) VALUES ('1', 'anttribe', 'e10adc3949ba59abbe56e057f20f883e', null, null, null, null, null, null, null, null, '1', 'anttribe', '123456');
+INSERT INTO `t_webim_user`(`id`, `username`, `password`, `nickname`, `email`, `mobile`, `avatar`, `signature`, `create_time`, `update_time`, `latest_login_time`, `available`, `hx_username`, `hx_password`) VALUES ('1', 'anttribe', 'e10adc3949ba59abbe56e057f20f883e', null, null, null, null, null, null, null, null, '1', 'anttribe', '123456');
 
 -- ----------------------------
 -- Table structure for `t_webim_message`
@@ -50,11 +50,11 @@ CREATE TABLE `t_webim_message` (
   `id` varchar(32) NOT NULL DEFAULT '',
   `mfrom` varchar(256) NOT NULL,
   `mto` varchar(256) NOT NULL,
-  `chatType` varchar(32) DEFAULT NULL,
+  `chat_type` varchar(32) DEFAULT NULL,
   `mtimestamp` longtext,
-  `msgBodies` varchar(2048) DEFAULT NULL,
-  `extParams` varchar(512) DEFAULT NULL,
-  `hxMsgId` varchar(128) DEFAULT NULL,
+  `msg_bodies` varchar(2048) DEFAULT NULL,
+  `ext_params` varchar(512) DEFAULT NULL,
+  `hx_msg_id` varchar(128) DEFAULT NULL,
   `create_month` varchar(8),
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
@@ -65,16 +65,16 @@ CREATE TABLE `t_webim_message` (
 DROP TABLE IF EXISTS `t_webim_messagebody`;
 CREATE TABLE `t_webim_messagebody` (
   `id` varchar(32) NOT NULL,
-  `messageId` varchar(32) NOT NULL,
-  `messateType` varchar(32) DEFAULT NULL,
+  `message_id` varchar(32) NOT NULL,
+  `messate_type` varchar(32) DEFAULT NULL,
   `msg` varchar(1024) DEFAULT NULL,
   `filename` varchar(256) DEFAULT NULL,
-  `hxUrl` varchar(1024) DEFAULT NULL,
+  `hx_file_url` varchar(1024) DEFAULT NULL,
   `duration` longtext,
-  `fileLength` longtext,
+  `file_length` longtext,
   `secret` varchar(256) DEFAULT NULL,
-  `hxThumbUrl` varchar(1024) DEFAULT NULL,
-  `thumbSecret` varchar(256) DEFAULT NULL,
+  `hx_thumb_url` varchar(1024) DEFAULT NULL,
+  `thumb_secret` varchar(256) DEFAULT NULL,
   `filepath` varchar(512) DEFAULT NULL,
   `thumbpath` varchar(512) DEFAULT NULL,
   `address` varchar(512) DEFAULT NULL,

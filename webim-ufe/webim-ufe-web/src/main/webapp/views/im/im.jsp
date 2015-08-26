@@ -91,12 +91,10 @@
                 </div>
                 <div class="panel-footer">
                     <div class="chat-toolbar">
-                        <form action="" enctype="multipart/form-data" class="form-horizontal chat-form">
-                            <div class="chat-toolbar-btn add-emotion-btn" title="<spring:message code="app.im.action.addemotion" />"><span class="chat-emotion"></span></div>
-                            <div class="chat-toolbar-btn add-file-btn" title="<spring:message code="app.im.action.addefile" />"><span class="chat-file"></span></div>
-                            <div class="chat-input"><textarea class="chat-textarea"></textarea></div>
-                            <button type="button" class="btn btn-primary chat-send-btn"><spring:message code="app.common.action.send" /></button>
-                        </form>
+                        <div class="chat-toolbar-btn add-emotion-btn" title="<spring:message code="app.im.action.addemotion" />"><span class="chat-emotion"></span></div>
+                        <div class="chat-toolbar-btn add-file-btn" title="<spring:message code="app.im.action.addefile" />"><span class="chat-file"></span></div>
+                        <div class="chat-input"><textarea class="chat-textarea"></textarea></div>
+                        <button type="button" class="btn btn-primary chat-send-btn"><spring:message code="app.common.action.send" /></button>
                     </div>
                 </div>
             </div>
@@ -128,7 +126,7 @@
         	conn: null,  // 环信连接对象
         	user: {  // 当前用户对象
         		userid: '',
-        		username: '${user.username}',
+        		username: '${user.hxUsername}',
         		password: '${user.hxPassword}',
         		nickname: '${user.nickname}'
         	},
@@ -378,40 +376,49 @@
         		}
         	    im.sendingMessage = true;
         	    
-        	    // 添加发送人
-        	    $.extend(txtMessage, { from: im.user.userid });
-        	    // 发送消息
-        	    $('.chat-form', '#chat-window-' + im.chatingUser.userid).ajaxSubmit({
-        	    	type: 'POST',
-       		        url: 'im/persistent',
-       		        data : {mfrom: txtMessage.from, mto: txtMessage.to, chatType: txtMessage.type, 'messageBodies[0].msg': txtMessage.msg, 'messageBodies[0].type': 'Text'},
-       		        success: function(result){
-       		    	    // 成功响应
-       		    	    if(result && result['resultCode'] == '000000' && result['data']){
-       		    		    var message = result['data'];
-       		    	    	$.extend(txtMessage, {
-       		    			    ext: {
-       		    			    	timestamp: message['mtimestamp']|| (new Date().getTime()),
-       		    				    messageId: message['messageId']
-       		    			    }
-       		    		    });
-       		    		    // easemobwebim-sdk发送文本消息的方法 to为发送给谁，meg为文本消息对象
-       		    		    im.conn.sendTextMessage(txtMessage);
-       		    		    
-       		    		    $.extend(txtMessage, {data: txtMessage.msg, sent: true});
-       		    		    im.appendMessage(txtMessage, txtMessage.to);
-       		    		    im.resetChatingUI();
-       		    	    }
-       		        },
-       		        error: function(){
-       		        	// 如果发送消息失败，标志后台服务有问题，直接发送环信消息
-       		        	// im.conn.sendTextMessage(txtMessage);
-       		        	console.log('error');
-       		        	$.extend(txtMessage, {data: txtMessage.msg, sent: false, ext: {timestamp: new Date().getTime()}});
-       		        	im.appendMessage(txtMessage, txtMessage.to);
-       		        	im.resetChatingUI();
-       		        }
+        	    // 添加发送人和发送时间
+        	    $.extend(txtMessage, {
+        	    	from: im.user.userid, 
+        	    	ext: {
+        	    	    timestamp: new Date().getTime()
+        	        }
         	    });
+//         	    // 发送消息
+//         	    $('.chat-form', '#chat-window-' + im.chatingUser.userid).ajaxSubmit({
+//         	    	type: 'POST',
+//        		        url: 'im/persistent',
+//        		        data : {mfrom: txtMessage.from, mto: txtMessage.to, chatType: txtMessage.type, 'messageBodies[0].msg': txtMessage.msg, 'messageBodies[0].type': 'Text'},
+//        		        success: function(result){
+//        		    	    // 成功响应
+//        		    	    if(result && result['resultCode'] == '000000' && result['data']){
+//        		    		    var message = result['data'];
+//        		    	    	$.extend(txtMessage, {
+//        		    			    ext: {
+//        		    			    	timestamp: message['mtimestamp']|| (),
+//        		    				    messageId: message['messageId']
+//        		    			    }
+//        		    		    });
+//        		    	    }
+//        		        },
+//        		        error: function(){
+//        		        	// 如果发送消息失败，标志后台服务有问题，直接发送环信消息
+//        		        	// im.conn.sendTextMessage(txtMessage);
+//        		        	console.log('error');
+//        		        	$.extend(txtMessage, {data: txtMessage.msg, sent: false, ext: {timestamp: new Date().getTime()}});
+//        		        	im.appendMessage(txtMessage, txtMessage.to);
+//        		        	im.resetChatingUI();
+//        		        }
+//         	    });
+
+        	    // easemobwebim-sdk发送文本消息的方法 to为发送给谁，meg为文本消息对象
+	    		im.conn.sendTextMessage(txtMessage);
+    		    $.extend(txtMessage, {
+    		    	data: txtMessage.msg, 
+    		    	sent: true
+    		    });
+    		    
+	    		im.appendMessage(txtMessage, txtMessage.to);
+	    		im.resetChatingUI();
         	},
         	sendFileMessage: function(fileMessage){ // 发送文件消息
         		if(im.sendingMessage){
@@ -420,65 +427,77 @@
         	    im.sendingMessage = true;
         	    
         	    // 添加发送人
-        	    $.extend(fileMessage, { from: im.user.userid });
-        	    // 获取消息类型
-        	    var messageType = im.resolveMessageType(fileMessage.data.type) || 'Text';
-        	    // 发送消息
-        	    $('.chat-form', '#chat-window-' + im.chatingUser.userid).ajaxSubmit({
-        	    	type: 'POST',
-       		        url: 'im/persistent',
-       		        data : {mfrom: fileMessage.from, mto: fileMessage.to, chatType: fileMessage.type, 'messageBodies[0].filename': fileMessage.data.fileName, 'messageBodies[0].filepath': fileMessage.data.filePath, 'messageBodies[0].fileLength': fileMessage.data.size, 'messageBodies[0].type': messageType},
-       		        success: function(result){
-       		    	    // 成功响应
-       		    	    if(result && result['resultCode'] == '000000' && result['data']){
-       		    	    	var message = result['data'];
-       		    	    	$.extend(fileMessage, {
-       		    			    ext: {
-       		    			    	timestamp: message['mtimestamp']|| (new Date().getTime()),
-       		    				    messageId: message['messageId']
-       		    			    }
-       		    		    });
-       		    		    
-       		    		    if('Image' == messageType || 'Audio' == messageType || 'File' == messageType){
-       		    		    	$.extend(fileMessage, {
-       		    		    		fileInputId : 'chatFileInput',
-       		    		    		onFileUploadError : function(error) {
-       		    		    			console.log(error);
-       		    		    			$.extend(fileMessage, {sent: false});
-       		    		    			im.appendMessage(fileMessage, fileMessage.to);
-       		    		    			im.resetChatingUI();
-   		    						},
-   		    						onFileUploadComplete : function(data) {
-   		    							var file = $('input[name="file"]');
-   		    							if (file && file.length > 0 && file[0].files) {
-   		    								var objectURL = Utils.$objectURL(file[0].files[0]);
-   		    								if (objectURL) {
-   		    									$.extend(fileMessage, {data: [{type: messageType, filepath: objectURL, filename: fileMessage.data.fileName || ''}], sent: true});
-   		    									im.appendMessage(fileMessage, fileMessage.to);
-   		    									im.resetChatingUI();
-   		    								}
-   		    							}
-   		    						}
-       		    		    	})
-       		    		    	
-       		    		    	if('Image' == messageType){
-       		    		    		im.conn.sendPicture(fileMessage);
-       		    		    	} else if('Audio' == messageType){
-       		    		    		im.conn.sendAudio(fileMessage);
-       		    		    	} else{
-       		    		    		im.conn.sendFile(fileMessage);
-       		    		    	}
-       		    		    }
-       		    	    }
-       		        },
-       		        error: function(){
-       		        	// 如果发送消息失败，标志后台服务有问题，直接发送环信消息
-       		        	console.log('error');
-       		        	$.extend(fileMessage, {sent: false, ext: {timestamp: new Date().getTime()}});
-       		        	im.appendMessage(fileMessage, fileMessage.to);
-       		        	im.resetChatingUI();
-       		        }
+        	    $.extend(fileMessage, {
+        	    	from: im.user.userid,
+        	    	ext: {
+        	    	    timestamp: new Date().getTime()
+        	        }
         	    });
+//         	    // 发送消息
+//         	    $('.chat-form', '#chat-window-' + im.chatingUser.userid).ajaxSubmit({
+//         	    	type: 'POST',
+//        		        url: 'im/persistent',
+//        		        data : {mfrom: fileMessage.from, mto: fileMessage.to, chatType: fileMessage.type, 'messageBodies[0].filename': fileMessage.data.fileName, 'messageBodies[0].filepath': fileMessage.data.filePath, 'messageBodies[0].fileLength': fileMessage.data.size, 'messageBodies[0].type': messageType},
+//        		        success: function(result){
+//        		    	    // 成功响应
+//        		    	    if(result && result['resultCode'] == '000000' && result['data']){
+//        		    	    	var message = result['data'];
+//        		    	    	$.extend(fileMessage, {
+//        		    			    ext: {
+//        		    			    	timestamp: message['mtimestamp']|| (new Date().getTime()),
+//        		    				    messageId: message['messageId']
+//        		    			    }
+//        		    		    });
+//        		    	    }
+//        		        },
+//        		        error: function(){
+//        		        	// 如果发送消息失败，标志后台服务有问题，直接发送环信消息
+//        		        	console.log('error');
+//        		        	$.extend(fileMessage, {sent: false, ext: {timestamp: new Date().getTime()}});
+//        		        	im.appendMessage(fileMessage, fileMessage.to);
+//        		        	im.resetChatingUI();
+//        		        }
+//         	    });
+                
+                var fileInput = $('#chatFileInput');
+   				if (fileInput && fileInput.length > 0 && fileInput[0].files) {
+   				    var file = fileInput[0].files[0];
+   				    if(file){
+   				    	var objectURL = Utils.$objectURL(file);
+   				    	var filename = file.name;
+   				    	if(objectURL && filename){
+   				    	    // 获取消息类型
+   	   		        	    var messageType = im.resolveMessageType(filename) || 'File';
+   	   		        	    if('Image' == messageType || 'Audio' == messageType || 'File' == messageType){
+   	   		        	    	$.extend(fileMessage, {
+   	   		        	    	    data: [{
+									    type: messageType, 
+									    filepath: objectURL, 
+									    filename: filename || ''
+								    }],
+   	   			    		    	fileInputId : 'chatFileInput',
+   	   			    		    	onFileUploadError : function(error) {
+   	   			    		    		$.extend(fileMessage, {sent: false});
+   	   			    		    		im.appendMessage(fileMessage, fileMessage.to);
+   	   			    		    		im.resetChatingUI();
+   	   		   						},
+   	   		   						onFileUploadComplete : function(data) {
+   	   		   					        $.extend(fileMessage, {sent: true});
+  									    im.appendMessage(fileMessage, fileMessage.to);
+  									    im.resetChatingUI();
+   	   		   						}
+   	   		        	    	});
+   	   		        	    	if('Image' == messageType){
+   	   			    		    	im.conn.sendPicture(fileMessage);
+   	   			    		    } else if('Audio' == messageType){
+   	   			    		    	im.conn.sendAudio(fileMessage);
+   	   			    		    } else{
+   	   			    		    	im.conn.sendFile(fileMessage);
+   	   			    		    }
+   	   		        	    }
+   				    	}
+   				    }
+   				}
         	},
         	resetChatingUI: function(){  // 重置聊天界面
         		$('.chat-textarea', '#chat-window-' + im.chatingUser.userid).val('');
@@ -591,19 +610,16 @@
         	    };
         	    im.sendTextMessage(textMessage);
         	},
-        	onSendFileMessage: function(file){  // 发送文件
-        	    if(file){
-        	    	var mto = im.chatingUser && im.chatingUser.userid;
-            	    if(!mto){
-            	    	return;
-            	    }
-            	    var fileMessage = {
-            	    	to: mto,
-            	    	type: im.chatingUser.type || 'chat',
-            	    	data: file
-            	    };
-            	    im.sendFileMessage(fileMessage);
+        	onSendFileMessage: function(){  // 发送文件
+        		var mto = im.chatingUser && im.chatingUser.userid;
+        	    if(!mto){
+        	    	return;
         	    }
+        	    var fileMessage = {
+        	    	to: mto,
+        	    	type: im.chatingUser.type || 'chat'
+        	    };
+        	    im.sendFileMessage(fileMessage);
         	},
         	onAddEmotion: function(e){  // 添加表情
         		$('.emotion-panel').toggle();
@@ -733,7 +749,6 @@
         	
         	// 初始化表情列表
         	im.populateEmotionPanel();
-        	
         	// 聊天窗口关闭
         	$('.panel-close').click(im.overChating);
         	// 查看更多消息
@@ -748,28 +763,16 @@
         	});
         	// 上传文件
         	$('input[name="file"]').fileupload({
-    			url : 'fileupload?uploaderConfigKey=chatfiles',
+    			url : '',
     			replaceFileInput: false,
+    			autoUpload: false,
     			progressall: function(e, data){},
-                done: function (e, data) {
-                	if(data && data.result) {
-    		            try {
-    			            var result = $.parseJSON(data.result);
-    			            if(result.resultCode && result.resultCode == 'FU00001'){
-        			            // 成功处理
-        			            if(result.data){
-        				            $.each(result.data, function (index, item) {
-        				            	// 文件上传成功处理
-    				    				im.onSendFileMessage(item);
-                                    });
-        			            }
-        		            } else if(result.message){
-        		                alert(result.message);
-        		            }
-    			        } catch(er){
-    			        }
-    			    }
-    	        }
+                add: function(e, data){
+                	if (e.isDefaultPrevented()) {
+                        return false;
+                    }
+                	im.onSendFileMessage();
+                }
     	    });
         });
     </script>

@@ -11,8 +11,6 @@ import java.util.List;
 
 import org.anttribe.opengadget.core.domain.MybatisAbstractEntity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
 /**
  * @author zhaoyong
  * @version 2015年8月3日
@@ -63,6 +61,11 @@ public class Message extends MybatisAbstractEntity
      * 环信消息id
      */
     private String hxMsgId;
+    
+    /**
+     * 消息创建的月份，用于mycat的分片规则
+     */
+    private String createMonth;
     
     /**
      * 最近一次同步的消息
@@ -164,5 +167,15 @@ public class Message extends MybatisAbstractEntity
     public void setHxMsgId(String hxMsgId)
     {
         this.hxMsgId = hxMsgId;
+    }
+    
+    public String getCreateMonth()
+    {
+        return createMonth;
+    }
+    
+    public void setCreateMonth(String createMonth)
+    {
+        this.createMonth = createMonth;
     }
 }

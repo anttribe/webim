@@ -86,7 +86,7 @@ public class IMController
             result.setResultCode(MessageErrorNumber.MESSAGE_WITHOUT_BODIES_ERROR);
             return result;
         }
-        MessageType type = messageBodies.get(0).getType();
+        MessageType type = messageBodies.get(0).getMessageType();
         if ((MessageType.Image == type || MessageType.Audio == type) && null != file)
         {
             File targetFile = this.processFileUpload(request, file);
