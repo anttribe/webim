@@ -72,10 +72,10 @@ public class Message extends MybatisAbstractEntity
      * 
      * @return Message
      */
-    public static Message findHxLastUpdatedMessage()
+    public static Message findLatestSyncMessage()
     {
         String statement =
-            (new StringBuilder()).append(Message.class.getCanonicalName()).append(".queryHxLastUpdated").toString();
+            (new StringBuilder()).append(Message.class.getCanonicalName()).append(".queryLatestSyncMessage").toString();
         return getSqlSessionTemplate().selectOne(statement);
     }
     

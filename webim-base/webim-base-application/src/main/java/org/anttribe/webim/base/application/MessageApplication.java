@@ -32,4 +32,15 @@ public interface MessageApplication
      * @return List<Message>
      */
     List<Message> listMessageList(Map<String, Object> params);
+    
+    /**
+     * 同步环信聊天记录
+     * 
+     * @param startMillis 开始的毫秒
+     * @param endMillis 结束毫秒数
+     * @param limit 获取数据条数
+     * @param cursor 游标
+     * @return Map<String, Object>
+     */
+    Map<String, Object> synchHxMessage(Long startMillis, Integer limit, String cursor);
 }
