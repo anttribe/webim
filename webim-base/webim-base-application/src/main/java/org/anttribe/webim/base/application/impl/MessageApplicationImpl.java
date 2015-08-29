@@ -17,6 +17,7 @@ import org.anttribe.webim.base.application.MessageApplication;
 import org.anttribe.webim.base.core.common.Global;
 import org.anttribe.webim.base.core.domain.Message;
 import org.anttribe.webim.base.core.domain.MessageBody;
+import org.anttribe.webim.base.core.domain.MessageType;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.ArrayUtils;
@@ -141,7 +142,6 @@ public class MessageApplicationImpl implements MessageApplication
                 // }
                 // }
                 
-                // 获取messageId
                 JsonNode messageJsonNode = messagesJsoNodes.next();
                 JsonNode payloadNode = messageJsonNode.path("payload");
                 if (null == payloadNode)
@@ -158,6 +158,7 @@ public class MessageApplicationImpl implements MessageApplication
                 JsonNode messageIdNode = extNode.get("messageId");
                 if (null != messageIdNode && !StringUtils.isEmpty(messageIdNode.asText()))
                 {
+                    // 获取messageId
                     messageId = messageIdNode.asText();
                 }
                 Message message = new Message();
@@ -166,8 +167,8 @@ public class MessageApplicationImpl implements MessageApplication
                 message.setMtimestamp(messageJsonNode.get("timestamp").asLong());
                 message.setBodies(payloadNode.get("bodies").toString());
                 message.setExtParams(extNode.toString());
-                // TODO: 处理消息体
-                
+                // 处理消息体
+                message.setMessageBodies(MessageType.parseMessageBodies(payloadNode.get("bodies")));
                 messageList.add(message);
             }
             
