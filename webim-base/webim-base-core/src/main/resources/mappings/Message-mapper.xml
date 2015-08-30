@@ -111,8 +111,8 @@
 		</if>
 	</select>
 
-	<!-- queryHxLastUpdated: 查询最近后一条从环信同步的数据 -->
-	<select id="queryHxLastUpdated" resultMap="Message-resultMap-base">
+	<!-- queryLatestSyncMessage: 最近一次同步的消息 -->
+	<select id="queryLatestSyncMessage" resultMap="Message-resultMap-base">
 		<![CDATA[
 		    select id, mfrom, mto, chat_type, mtimestamp, msg_bodies, ext_params, hx_msg_id, create_month
 		        from t_webim_message 

@@ -256,9 +256,9 @@ public enum MessageType
         if (null != bodyNode)
         {
             JsonNode messageTypeNode = bodyNode.get("type");
-            if (null == messageTypeNode || StringUtils.isEmpty(messageTypeNode.asText()))
+            if (null != messageTypeNode && !StringUtils.isEmpty(messageTypeNode.asText()))
             {
-                MessageType messageType = MessageType.valueOf(messageTypeNode.asText());
+                MessageType messageType = MessageType.valueOfHxMessageType(messageTypeNode.asText());
                 if (null != messageType)
                 {
                     MessageBody messageBody = messageType.parseMessageBodyFromJsonNode(bodyNode);

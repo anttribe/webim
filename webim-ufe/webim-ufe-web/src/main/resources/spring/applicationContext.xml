@@ -23,7 +23,8 @@
 		<constructor-arg value="application.properties" />
 	</bean>
 
-	<bean class="org.anttribe.webim.base.core.common.Global" factory-method="me">
+	<bean class="org.anttribe.webim.base.core.common.Global"
+		factory-method="me">
 		<property name="configuration" ref="configuration" />
 	</bean>
 
@@ -33,6 +34,6 @@
 
 	<!-- import other layer definitions -->
 	<import resource="applicationContext-datasource.xml" />
-<!-- 	<import resource="applicationContext-quatz.xml" /> -->
+	<import resource="applicationContext-quatz.xml" />
 	<import resource="applicationContext-web.xml" />
 </beans>

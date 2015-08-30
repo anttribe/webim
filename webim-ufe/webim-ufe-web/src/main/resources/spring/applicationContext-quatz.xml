@@ -4,8 +4,8 @@
 	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
 		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
 
-	<!-- 环信消息同步任务 com.jsyc.webim.job.HxMessageSyncJob -->
-	<bean id="hxMessageSyncJob" class="com.jsyc.webim.jobs.HxMessageSyncJob">
+	<!-- 环信消息同步任务 org.anttribe.webim.base.jobs.HxMessageSyncJob -->
+	<bean id="hxMessageSyncJob" class="org.anttribe.webim.base.jobs.HxMessageSyncJob">
 	</bean>
 
 	<bean id="jobDetail"

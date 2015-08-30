@@ -7,8 +7,6 @@
  */
 package org.anttribe.webim.ufe.facade.impl;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -49,11 +47,6 @@ public class MessageFacadeImpl implements MessageFacade
     @Autowired
     private MessageApplication messageApplication;
     
-    /**
-     * 用于格式化Message上的create_month
-     */
-    private static DateFormat createMonthFormat = new SimpleDateFormat("yyyyMM");
-    
     @Override
     public Message persistentMessage(Message message)
     {
@@ -80,7 +73,6 @@ public class MessageFacadeImpl implements MessageFacade
         // 保存消息数据到DB
         message.setMessageId(UUIDUtils.getRandomUUID());
         message.setMtimestamp(System.currentTimeMillis());
-        message.setCreateMonth(createMonthFormat.format(new Date()));
         
         List<MessageBody> tempMessageBodies = message.getMessageBodies();
         for (MessageBody messageBody : tempMessageBodies)

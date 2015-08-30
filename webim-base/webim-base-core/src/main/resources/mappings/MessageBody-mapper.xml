@@ -19,15 +19,16 @@
 		<result property="address" column="address" />
 		<result property="lat" column="lat" />
 		<result property="lng" column="lng" />
-<!-- 		<association property="message" column="{id = message_id}" -->
-<!-- 			javaType="org.anttribe.webim.base.core.domain.Message" select="org.anttribe.webim.base.core.domain.Message.queryById" /> -->
+		<!-- <association property="message" column="{id = message_id}" -->
+		<!-- javaType="org.anttribe.webim.base.core.domain.Message" select="org.anttribe.webim.base.core.domain.Message.queryById" 
+			/> -->
 	</resultMap>
 
 	<!-- insert: 插入单条数据 -->
 	<insert id="insert" parameterType="org.anttribe.webim.base.core.domain.MessageBody">
 		<![CDATA[
 		insert into t_webim_messagebody(id, messate_type, msg, filename, hx_file_url, duration, file_length, secret, hx_thumb_url, thumb_secret, filepath, thumbpath, address, lat, lng, message_id)
-		    values(#{id}, #{type}, #{msg}, #{filename}, #{hxUrl}, #{length}, #{fileLength}, #{secret}, #{hxThumbUrl}, #{thumbSecret}, #{filepath}, #{thumbpath}, #{address}, #{lat}, #{lng}, #{message.messageId})
+		    values(#{messageBodyId}, #{messageType}, #{msg}, #{filename}, #{hxFileUrl}, #{duration}, #{fileLength}, #{secret}, #{hxThumbUrl}, #{thumbSecret}, #{filepath}, #{thumbpath}, #{address}, #{lat}, #{lng}, #{message.messageId})
 		]]>
 	</insert>
 
@@ -38,12 +39,16 @@
 		values
 		]]>
 		<foreach collection="list" item="item" separator=", ">
-			(#{item.id},
-			#{item.type}, #{item.msg}, #{item.filename},
-			#{item.hxUrl},
-			#{item.length}, #{item.fileLength}, #{item.secret},
-			#{item.hxThumbUrl}, #{item.thumbSecret}, #{item.filepath},
-			#{item.thumbpath}, #{item.address}, #{item.lat}, #{item.lng},
+			(#{item.messageBodyId},
+			#{item.messageType}, #{item.msg},
+			#{item.filename},
+			#{item.hxFileUrl},
+			#{item.duration},
+			#{item.fileLength}, #{item.secret},
+			#{item.hxThumbUrl},
+			#{item.thumbSecret}, #{item.filepath},
+			#{item.thumbpath},
+			#{item.address}, #{item.lat}, #{item.lng},
 			#{item.message.messageId})
 		</foreach>
 	</insert>
@@ -66,7 +71,7 @@
 		<![CDATA[
 		]]>
 	</select>
-	
+
 	<!-- queryByMessage: 根据message查询数据 -->
 	<select id="queryByMessage" resultMap="MessageBody-resultMap"
 		parameterType="java.util.Map">

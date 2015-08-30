@@ -7,14 +7,19 @@
  */
 package org.anttribe.webim.base.application.impl;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.anttribe.component.lang.UUIDUtils;
 import org.anttribe.webim.base.application.MessageApplication;
 import org.anttribe.webim.base.core.common.Global;
+import org.anttribe.webim.base.core.domain.ChatType;
 import org.anttribe.webim.base.core.domain.Message;
 import org.anttribe.webim.base.core.domain.MessageBody;
 import org.anttribe.webim.base.core.domain.MessageType;
@@ -35,6 +40,11 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 public class MessageApplicationImpl implements MessageApplication
 {
     
+    /**
+     * 用于格式化Message上的create_month
+     */
+    private static DateFormat createMonthFormat = new SimpleDateFormat("yyyyMM");
+    
     @Override
     public void saveMessage(Message... messages)
     {
@@ -46,6 +56,7 @@ public class MessageApplicationImpl implements MessageApplication
                 {
                     continue;
                 }
+                message.setCreateMonth(createMonthFormat.format(new Date()));
                 message.save();
                 
                 List<MessageBody> messageBodies = message.getMessageBodies();
@@ -107,7 +118,8 @@ public class MessageApplicationImpl implements MessageApplication
     {
         if (null != messages && messages.isArray())
         {
-            List<Message> messageList = new ArrayList<Message>();
+            List<Message> updateMessageList = new ArrayList<Message>();
+            List<Message> insertMessageList = new ArrayList<Message>();
             Iterator<JsonNode> messagesJsoNodes = messages.iterator();
             while (messagesJsoNodes.hasNext())
             {
@@ -163,18 +175,46 @@ public class MessageApplicationImpl implements MessageApplication
                 }
                 Message message = new Message();
                 message.setMessageId(messageId);
+                message.setMfrom(messageJsonNode.get("from").asText());
+                message.setMto(messageJsonNode.get("to").asText());
+                message.setChatType(ChatType.valueOf(messageJsonNode.get("chat_type").asText()));
                 message.setHxMsgId(messageJsonNode.get("msg_id").asText());
                 message.setMtimestamp(messageJsonNode.get("timestamp").asLong());
                 message.setBodies(payloadNode.get("bodies").toString());
                 message.setExtParams(extNode.toString());
                 // 处理消息体
-                message.setMessageBodies(MessageType.parseMessageBodies(payloadNode.get("bodies")));
-                messageList.add(message);
+                List<MessageBody> messageBodies = MessageType.parseMessageBodies(payloadNode.get("bodies"));
+                if (!CollectionUtils.isEmpty(messageBodies))
+                {
+                    for (MessageBody messageBody : messageBodies)
+                    {
+                        messageBody.setMessage(message);
+                    }
+                    message.setMessageBodies(messageBodies);
+                }
+                
+                if (StringUtils.isEmpty(message.getMessageId()))
+                {
+                    message.setMessageId(UUIDUtils.getRandomUUID());
+                    for (MessageBody messageBody : message.getMessageBodies())
+                    {
+                        messageBody.setMessageBodyId(UUIDUtils.getRandomUUID());
+                    }
+                    insertMessageList.add(message);
+                }
+                else
+                {
+                    updateMessageList.add(message);
+                }
             }
             
-            if (!CollectionUtils.isEmpty(messageList))
+            if (!CollectionUtils.isEmpty(updateMessageList))
             {
-                Message.batchUpdate(Message.class, messageList);
+                Message.batchUpdate(Message.class, updateMessageList);
+            }
+            if (!CollectionUtils.isEmpty(insertMessageList))
+            {
+                this.saveMessage(insertMessageList.toArray(new Message[insertMessageList.size()]));
             }
         }
     }
