@@ -14,7 +14,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.anttribe.webim.base.infra.AudioFileConverter;
+import org.anttribe.webim.base.infra.ffmpeg.Amr2Mp3Converter;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang.StringUtils;
 
@@ -158,7 +158,7 @@ public enum MessageType
             if (localFile.exists())
             {
                 convertFilepath = localFile.getParent() + "/" + localFile.getName() + ".mp3";
-                AudioFileConverter converter = new AudioFileConverter();
+                Amr2Mp3Converter converter = new Amr2Mp3Converter();
                 converter.convert(localFilepath, convertFilepath);
             }
             
