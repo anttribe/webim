@@ -7,10 +7,15 @@
  */
 package org.anttribe.webim.base.infra.httpclient;
 
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
+import java.util.Map;
 
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
@@ -19,6 +24,7 @@ import javax.net.ssl.X509TrustManager;
 import org.anttribe.webim.base.infra.httpclient.vo.Credential;
 import org.anttribe.webim.base.infra.httpclient.vo.HTTPMethod;
 import org.anttribe.webim.base.infra.httpclient.vo.Token;
+import org.apache.commons.collections.MapUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -111,6 +117,66 @@ public class HTTPClientUtils
         }
         
         return resObjectNode;
+    }
+    
+    /**
+     * 下载文件
+     * 
+     * @param srcFileUrl 源文件url
+     * @param destFilePath 目标文件路径
+     * @param credential 证书
+     * @param headers 头消息
+     */
+    public static void downloadFile(URL srcFileUrl, String destFilePath, Credential credential,
+        Map<String, String> headers)
+    {
+        HttpClient httpClient = getClient(true);
+        try
+        {
+            HttpGet httpGet = new HttpGet(srcFileUrl.toURI());
+            
+            if (credential != null)
+            {
+                Token.applyAuthentication(httpGet, credential);
+            }
+            
+            if (!MapUtils.isEmpty(headers))
+            {
+                for (Map.Entry<String, String> entry : headers.entrySet())
+                {
+                    httpGet.addHeader(entry.getKey(), entry.getValue());
+                }
+            }
+            
+            HttpResponse response = httpClient.execute(httpGet);
+            
+            HttpEntity entity = response.getEntity();
+            if (entity != null)
+            {
+                InputStream in = entity.getContent();
+                File destFile = new File(destFilePath);
+                if (!destFile.exists())
+                {
+                    destFile.createNewFile();
+                }
+                BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(destFilePath));
+                byte[] buff = new byte[1024];
+                int len = 0;
+                while ((len = in.read(buff)) != -1)
+                {
+                    bos.write(buff, 0, len);
+                }
+                bos.close();
+            }
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+        finally
+        {
+            httpClient.getConnectionManager().shutdown();
+        }
     }
     
     /**

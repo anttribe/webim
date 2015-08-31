@@ -8,23 +8,41 @@
 	<bean id="hxMessageSyncJob" class="org.anttribe.webim.base.jobs.HxMessageSyncJob">
 	</bean>
 
-	<bean id="jobDetail"
+	<bean id="hxMessageSyncJobDetail"
 		class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
 		<property name="targetObject" ref="hxMessageSyncJob" />
 		<property name="targetMethod" value="execute" />
 	</bean>
 
-	<bean id="cronTrigger"
+	<bean id="hxMessageSyncJobCronTrigger"
 		class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
-		<property name="jobDetail" ref="jobDetail" />
+		<property name="jobDetail" ref="hxMessageSyncJobDetail" />
 		<property name="cronExpression" value="${hx.sync.job.cron}" />
 	</bean>
+
+	<!-- 环信消息下载任务，针对文件、音频、视频类的消息 org.anttribe.webim.base.jobs.HxMessageDownloadJob -->
+	<bean id="hxMessageDownloadJob" class="org.anttribe.webim.base.jobs.HxMessageDownloadJob">
+	</bean>
+
+	<bean id="hxMessageDownloadJobDetail"
+		class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject" ref="hxMessageDownloadJob" />
+		<property name="targetMethod" value="execute" />
+	</bean>
+
+	<bean id="hxMessageDownloadJobCronTrigger"
+		class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+		<property name="jobDetail" ref="hxMessageDownloadJobDetail" />
+		<property name="cronExpression" value="${hx.sync.job.cron}" />
+	</bean>
+
 
 	<bean id="schedulerFactory"
 		class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
 		<property name="triggers">
 			<list>
-				<ref bean="cronTrigger" />
+<!-- 				<ref bean="hxMessageSyncJobCronTrigger" /> -->
+				<ref bean="hxMessageDownloadJobCronTrigger" />
 			</list>
 		</property>
 	</bean>

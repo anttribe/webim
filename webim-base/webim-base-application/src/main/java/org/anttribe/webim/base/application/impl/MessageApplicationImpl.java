@@ -7,6 +7,7 @@
  */
 package org.anttribe.webim.base.application.impl;
 
+import java.io.File;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -27,6 +28,8 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -39,6 +42,8 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 @Service("messageApplication")
 public class MessageApplicationImpl implements MessageApplication
 {
+    
+    private static Logger logger = LoggerFactory.getLogger(MessageApplicationImpl.class);
     
     /**
      * 用于格式化Message上的create_month
@@ -217,5 +222,70 @@ public class MessageApplicationImpl implements MessageApplication
                 this.saveMessage(insertMessageList.toArray(new Message[insertMessageList.size()]));
             }
         }
+    }
+    
+    @Override
+    public void downloadHxMessageFiles()
+    {
+        // 获取所有媒体类型消息体
+        List<MessageBody> messageBodies = MessageBody.findFileMessageBodies();
+        if (!CollectionUtils.isEmpty(messageBodies))
+        {
+            for (MessageBody messageBody : messageBodies)
+            {
+                if (messageBody.getMessageType() == MessageType.Audio
+                    || messageBody.getMessageType() == MessageType.File)
+                {
+                    // 下载文件
+                    String tmpFilepath = this.downloadMessageFile(messageBody);
+                    if (StringUtils.isEmpty(tmpFilepath))
+                    {
+                        logger.warn(
+                            "Failed to download messageFile, messageBody's id is " + messageBody.getMessageBodyId());
+                        continue;
+                    }
+                    // 文件转换处理
+                    String convertFilepath = messageBody.getMessageType().convertMessageFile(messageBody, tmpFilepath);
+                    if (StringUtils.isEmpty(convertFilepath))
+                    {
+                        logger.warn(
+                            "Failed to convert messageFile, messageBody's id is " + messageBody.getMessageBodyId());
+                        continue;
+                    }
+                    // TODO:保存文件至远程服务器
+                    // 更新数据库
+                    messageBody.setFilepath(convertFilepath);
+                    messageBody.update();
+                }
+            }
+        }
+    }
+    
+    /**
+     * 下载消息文件
+     * 
+     * @param messageBody
+     * @return filepath
+     */
+    private String downloadMessageFile(MessageBody messageBody)
+    {
+        String filepath = "";
+        
+        String hxFileURL = messageBody.getHxFileUrl();
+        String secret = messageBody.getSecret();
+        if (!StringUtils.isEmpty(hxFileURL) && !StringUtils.isEmpty(secret))
+        {
+            // 构造文件路径
+            filepath = this.getClass().getClassLoader().getResource("").getPath() + "/tmp/";
+            File filepathFile = new File(filepath);
+            if (!filepathFile.exists())
+            {
+                filepathFile.mkdirs();
+            }
+            filepath += messageBody.getFilename() + ".amr";
+            
+            EasemobIntfManager.downloadHxFile(hxFileURL, secret, filepath);
+        }
+        return filepath;
     }
 }

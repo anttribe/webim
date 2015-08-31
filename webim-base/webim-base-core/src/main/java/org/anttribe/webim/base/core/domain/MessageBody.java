@@ -7,6 +7,8 @@
  */
 package org.anttribe.webim.base.core.domain;
 
+import java.util.List;
+
 import org.anttribe.opengadget.core.domain.MybatisAbstractEntity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -97,162 +99,174 @@ public class MessageBody extends MybatisAbstractEntity
      * 经度
      */
     private String lng;
-
+    
+    /**
+     * 获取所有文件类型消息体
+     * 
+     * @return List<MessageBody>
+     */
+    public static List<MessageBody> findFileMessageBodies()
+    {
+        String statement =
+            (new StringBuilder()).append(MessageBody.class.getCanonicalName()).append(".queryFileMessageBodies").toString();
+        return getSqlSessionTemplate().selectList(statement);
+    }
+    
     public String getMessageBodyId()
     {
         return messageBodyId;
     }
-
+    
     public void setMessageBodyId(String messageBodyId)
     {
         this.messageBodyId = messageBodyId;
     }
-
+    
     public Message getMessage()
     {
         return message;
     }
-
+    
     public void setMessage(Message message)
     {
         this.message = message;
     }
-
+    
     public MessageType getMessageType()
     {
         return messageType;
     }
-
+    
     public void setMessageType(MessageType messageType)
     {
         this.messageType = messageType;
     }
-
+    
     public String getMsg()
     {
         return msg;
     }
-
+    
     public void setMsg(String msg)
     {
         this.msg = msg;
     }
-
+    
     public String getFilename()
     {
         return filename;
     }
-
+    
     public void setFilename(String filename)
     {
         this.filename = filename;
     }
-
+    
     public String getHxFileUrl()
     {
         return hxFileUrl;
     }
-
+    
     public void setHxFileUrl(String hxFileUrl)
     {
         this.hxFileUrl = hxFileUrl;
     }
-
+    
     public long getDuration()
     {
         return duration;
     }
-
+    
     public void setDuration(long duration)
     {
         this.duration = duration;
     }
-
+    
     public long getFileLength()
     {
         return fileLength;
     }
-
+    
     public void setFileLength(long fileLength)
     {
         this.fileLength = fileLength;
     }
-
+    
     public String getSecret()
     {
         return secret;
     }
-
+    
     public void setSecret(String secret)
     {
         this.secret = secret;
     }
-
+    
     public String getHxThumbUrl()
     {
         return hxThumbUrl;
     }
-
+    
     public void setHxThumbUrl(String hxThumbUrl)
     {
         this.hxThumbUrl = hxThumbUrl;
     }
-
+    
     public String getThumbSecret()
     {
         return thumbSecret;
     }
-
+    
     public void setThumbSecret(String thumbSecret)
     {
         this.thumbSecret = thumbSecret;
     }
-
+    
     public String getFilepath()
     {
         return filepath;
     }
-
+    
     public void setFilepath(String filepath)
     {
         this.filepath = filepath;
     }
-
+    
     public String getThumbpath()
     {
         return thumbpath;
     }
-
+    
     public void setThumbpath(String thumbpath)
     {
         this.thumbpath = thumbpath;
     }
-
+    
     public String getAddress()
     {
         return address;
     }
-
+    
     public void setAddress(String address)
     {
         this.address = address;
     }
-
+    
     public String getLat()
     {
         return lat;
     }
-
+    
     public void setLat(String lat)
     {
         this.lat = lat;
     }
-
+    
     public String getLng()
     {
         return lng;
     }
-
+    
     public void setLng(String lng)
     {
         this.lng = lng;

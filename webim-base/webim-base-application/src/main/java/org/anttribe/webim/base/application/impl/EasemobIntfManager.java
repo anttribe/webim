@@ -7,8 +7,11 @@
  */
 package org.anttribe.webim.base.application.impl;
 
+import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.anttribe.webim.base.constants.EndPoints;
 import org.anttribe.webim.base.core.common.Global;
@@ -130,5 +133,27 @@ public class EasemobIntfManager
             logger.error("Getting chatmessages from Hx, get error, cause: %s", e);
         }
         return null;
+    }
+    
+    /**
+     * 下载环信文件
+     * 
+     * @param hxFileURL
+     * @param secret
+     * @param destFilepath
+     */
+    public static void downloadHxFile(String hxFileURL, String secret, String destFilepath)
+    {
+        
+        Map<String, String> headers = new HashMap<String, String>();
+        headers.put("share-secret", secret);
+        try
+        {
+            HTTPClientUtils.downloadFile(new URL(hxFileURL), destFilepath, credential, headers);
+        }
+        catch (MalformedURLException e)
+        {
+            e.printStackTrace();
+        }
     }
 }

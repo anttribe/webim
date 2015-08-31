@@ -7,12 +7,14 @@
  */
 package org.anttribe.webim.base.core.domain;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.anttribe.webim.base.infra.AudioFileConverter;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang.StringUtils;
 
@@ -53,6 +55,12 @@ public enum MessageType
                 return messageBody;
             }
             return null;
+        }
+        
+        @Override
+        public String convertMessageFile(MessageBody messageBody, String localFilepath)
+        {
+            return "";
         }
     },
     Image("img")
@@ -95,6 +103,12 @@ public enum MessageType
             }
             return null;
         }
+        
+        @Override
+        public String convertMessageFile(MessageBody messageBody, String localFilepath)
+        {
+            return "";
+        }
     },
     Audio("audio")
     {
@@ -135,6 +149,21 @@ public enum MessageType
             }
             return null;
         }
+        
+        @Override
+        public String convertMessageFile(MessageBody messageBody, String localFilepath)
+        {
+            String convertFilepath = "";
+            File localFile = new File(localFilepath);
+            if (localFile.exists())
+            {
+                convertFilepath = localFile.getParent() + "/" + localFile.getName() + ".mp3";
+                AudioFileConverter converter = new AudioFileConverter();
+                converter.convert(localFilepath, convertFilepath);
+            }
+            
+            return convertFilepath;
+        }
     },
     File("")
     {
@@ -148,6 +177,12 @@ public enum MessageType
         public MessageBody parseMessageBodyFromJsonNode(JsonNode bodyNode)
         {
             return null;
+        }
+        
+        @Override
+        public String convertMessageFile(MessageBody messageBody, String localFilepath)
+        {
+            return "";
         }
     };
     
@@ -208,6 +243,15 @@ public enum MessageType
      * @return MessageBody
      */
     public abstract MessageBody parseMessageBodyFromJsonNode(JsonNode bodyNode);
+    
+    /**
+     * 转换消息文件
+     * 
+     * @param messageBody
+     * @param localFilepath
+     * @return String
+     */
+    public abstract String convertMessageFile(MessageBody messageBody, String localFilepath);
     
     /**
      * 从jsonNode中解析出MessageBody集合对象

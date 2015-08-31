@@ -43,4 +43,9 @@ public interface MessageApplication
      * @return Map<String, Object>
      */
     Map<String, Object> synchHxMessage(Long startMillis, Integer limit, String cursor);
+    
+    /**
+     * 下载环信消息中的文件
+     */
+    void downloadHxMessageFiles();
 }
