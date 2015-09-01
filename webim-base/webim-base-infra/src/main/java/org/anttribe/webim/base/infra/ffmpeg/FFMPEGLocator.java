@@ -47,7 +47,7 @@ public class FFMPEGLocator extends it.sauronsoftware.jave.FFMPEGLocator
     @Override
     protected String getFFMPEGExecutablePath()
     {
-        return configuration.getString("ffmpeg.home") + "/bin/ffmpeg";
+        return configuration.getString("ffmpeg.home") + "/ffmpeg";
     }
     
 }

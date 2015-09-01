@@ -17,6 +17,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.anttribe.component.io.FileUtils;
 import org.anttribe.component.lang.UUIDUtils;
 import org.anttribe.webim.base.application.MessageApplication;
 import org.anttribe.webim.base.core.common.Global;
@@ -24,12 +25,16 @@ import org.anttribe.webim.base.core.domain.ChatType;
 import org.anttribe.webim.base.core.domain.Message;
 import org.anttribe.webim.base.core.domain.MessageBody;
 import org.anttribe.webim.base.core.domain.MessageType;
+import org.anttribe.webim.base.infra.WebUtils;
+import org.anttribe.webim.base.infra.fngenerator.DefaultFileNameGenerator;
+import org.anttribe.webim.base.infra.fngenerator.FileNameGenerator;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -50,6 +55,12 @@ public class MessageApplicationImpl implements MessageApplication
      */
     private static DateFormat createMonthFormat = new SimpleDateFormat("yyyyMM");
     
+    /**
+     * filenameGenerator
+     */
+    @Autowired
+    private FileNameGenerator filenameGenerator = new DefaultFileNameGenerator();
+    
     @Override
     public void saveMessage(Message... messages)
     {
@@ -61,7 +72,16 @@ public class MessageApplicationImpl implements MessageApplication
                 {
                     continue;
                 }
-                message.setCreateMonth(createMonthFormat.format(new Date()));
+                
+                // 处理时间
+                Date createMonth = new Date();
+                long mtimestamp = message.getMtimestamp();
+                if (mtimestamp != 0)
+                {
+                    createMonth = new Date(mtimestamp);
+                }
+                message.setCreateMonth(createMonthFormat.format(createMonth));
+                
                 message.save();
                 
                 List<MessageBody> messageBodies = message.getMessageBodies();
@@ -107,7 +127,7 @@ public class MessageApplicationImpl implements MessageApplication
             this.processHxMessages(messagesObjectNode.path("entities"));
             
             result.put("limit", limit);
-            result.put("cursor", messagesObjectNode.get("cursor"));
+            result.put("cursor", messagesObjectNode.get("cursor").asText());
             result.put("count", messagesObjectNode.get("count").asInt());
             result.put("startMillis", startMillis);
         }
@@ -221,6 +241,10 @@ public class MessageApplicationImpl implements MessageApplication
             {
                 this.saveMessage(insertMessageList.toArray(new Message[insertMessageList.size()]));
             }
+            
+            logger.debug("Synchronizing hx messages, {} updated and {} inserted.",
+                updateMessageList.size(),
+                insertMessageList.size());
         }
     }
     
@@ -252,7 +276,6 @@ public class MessageApplicationImpl implements MessageApplication
                             "Failed to convert messageFile, messageBody's id is " + messageBody.getMessageBodyId());
                         continue;
                     }
-                    // TODO:保存文件至远程服务器
                     // 更新数据库
                     messageBody.setFilepath(convertFilepath);
                     messageBody.update();
@@ -276,15 +299,24 @@ public class MessageApplicationImpl implements MessageApplication
         if (!StringUtils.isEmpty(hxFileURL) && !StringUtils.isEmpty(secret))
         {
             // 构造文件路径
-            filepath = this.getClass().getClassLoader().getResource("").getPath() + "/tmp/";
-            File filepathFile = new File(filepath);
+            filepath = "/tmp";
+            String abstractPath = System.getProperty(WebUtils.web_app_root_key);
+            File filepathFile = new File(abstractPath + filepath);
             if (!filepathFile.exists())
             {
                 filepathFile.mkdirs();
             }
-            filepath += messageBody.getFilename() + ".amr";
             
-            EasemobIntfManager.downloadHxFile(hxFileURL, secret, filepath);
+            String suffix = "";
+            String filename = messageBody.getFilename();
+            if (!StringUtils.isEmpty(filename))
+            {
+                suffix = FileUtils.getFileSuffix(filename);
+            }
+            
+            // 以当前时间描述命名该文件
+            filepath += "/" + filenameGenerator.generate("", "", suffix);
+            EasemobIntfManager.downloadHxFile(hxFileURL, secret, abstractPath + filepath);
         }
         return filepath;
     }

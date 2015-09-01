@@ -34,6 +34,7 @@
 
 	<!-- import other layer definitions -->
 	<import resource="applicationContext-datasource.xml" />
+	<import resource="applicationContext-application.xml" />
 	<import resource="applicationContext-quatz.xml" />
 	<import resource="applicationContext-web.xml" />
 </beans>

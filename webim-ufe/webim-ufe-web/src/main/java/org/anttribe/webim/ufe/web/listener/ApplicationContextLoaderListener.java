@@ -9,6 +9,7 @@ package org.anttribe.webim.ufe.web.listener;
 
 import javax.servlet.ServletContextEvent;
 
+import org.anttribe.webim.base.infra.WebUtils;
 import org.dayatang.domain.InstanceFactory;
 import org.dayatang.ioc.spring.factory.SpringInstanceProvider;
 import org.springframework.web.context.ContextLoaderListener;
@@ -29,5 +30,7 @@ public class ApplicationContextLoaderListener extends ContextLoaderListener
             WebApplicationContextUtils.getRequiredWebApplicationContext(event.getServletContext());
         SpringInstanceProvider springProvider = new SpringInstanceProvider(applicationContext);
         InstanceFactory.setInstanceProvider(springProvider);
+        
+        WebUtils.setWebAppRootSystemProperty(event.getServletContext());
     }
 }

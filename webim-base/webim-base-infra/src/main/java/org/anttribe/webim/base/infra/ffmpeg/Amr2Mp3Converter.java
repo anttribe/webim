@@ -7,15 +7,16 @@
  */
 package org.anttribe.webim.base.infra.ffmpeg;
 
+import java.io.File;
+
+import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import it.sauronsoftware.jave.AudioAttributes;
 import it.sauronsoftware.jave.Encoder;
 import it.sauronsoftware.jave.EncoderException;
 import it.sauronsoftware.jave.EncodingAttributes;
-import it.sauronsoftware.jave.InputFormatException;
-
-import java.io.File;
-
-import org.apache.commons.lang.StringUtils;
 
 /**
  * @author zhaoyong
@@ -23,6 +24,9 @@ import org.apache.commons.lang.StringUtils;
  */
 public class Amr2Mp3Converter
 {
+    
+    private static Logger logger = LoggerFactory.getLogger(Amr2Mp3Converter.class);
+    
     /**
      * 转换处理
      * 
@@ -50,17 +54,14 @@ public class Amr2Mp3Converter
             {
                 encoder.encode(srcFile, destFile, attrs);
             }
-            catch (IllegalArgumentException e)
-            {
-                e.printStackTrace();
-            }
-            catch (InputFormatException e)
-            {
-                e.printStackTrace();
-            }
             catch (EncoderException e)
             {
-                e.printStackTrace();
+                logger.warn("Converting amr to mp3, maybe get error, message: {}", e.getMessage());
+            }
+            catch (Exception e)
+            {
+                destFilepath = "";
+                logger.warn("Converting amr to mp3, maybe get error, cause: {}", e);
             }
         }
     }

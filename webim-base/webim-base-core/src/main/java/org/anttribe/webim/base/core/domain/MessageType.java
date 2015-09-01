@@ -14,6 +14,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.anttribe.webim.base.infra.WebUtils;
 import org.anttribe.webim.base.infra.ffmpeg.Amr2Mp3Converter;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang.StringUtils;
@@ -154,12 +155,15 @@ public enum MessageType
         public String convertMessageFile(MessageBody messageBody, String localFilepath)
         {
             String convertFilepath = "";
-            File localFile = new File(localFilepath);
+            String abstractPath = System.getProperty(WebUtils.web_app_root_key);
+            File localFile = new File(abstractPath + localFilepath);
             if (localFile.exists())
             {
-                convertFilepath = localFile.getParent() + "/" + localFile.getName() + ".mp3";
+                String parentPath = localFilepath.substring(0, localFilepath.lastIndexOf("/"));
+                // 转换后的文件路径
+                convertFilepath = parentPath + "/" + localFile.getName() + ".mp3";
                 Amr2Mp3Converter converter = new Amr2Mp3Converter();
-                converter.convert(localFilepath, convertFilepath);
+                converter.convert(localFile.getAbsolutePath(), abstractPath + convertFilepath);
             }
             
             return convertFilepath;

@@ -107,26 +107,28 @@ public class EasemobIntfManager
         try
         {
             String rest = "";
-            if (null != queryNode && queryNode.get("ql") != null && !StringUtils.isEmpty(queryNode.get("ql").asText()))
+            if (null != queryNode)
             {
-                rest = "ql=" + java.net.URLEncoder.encode(queryNode.get("ql").asText(), "utf-8");
-            }
-            if (null != queryNode && queryNode.get("limit") != null
-                && !StringUtils.isEmpty(queryNode.get("limit").asText()))
-            {
-                rest = rest + "&limit=" + queryNode.get("limit").asText();
-            }
-            if (null != queryNode && queryNode.get("cursor") != null
-                && !StringUtils.isEmpty(queryNode.get("cursor").asText()))
-            {
-                rest = rest + "&cursor=" + queryNode.get("cursor").asText();
+                if (queryNode.get("ql") != null && !StringUtils.isEmpty(queryNode.get("ql").asText()))
+                {
+                    rest = "ql=" + java.net.URLEncoder.encode(queryNode.get("ql").asText(), "utf-8");
+                }
+                if (queryNode.get("limit") != null && !StringUtils.isEmpty(queryNode.get("limit").asText()))
+                {
+                    rest = rest + "&limit=" + queryNode.get("limit").asText();
+                }
+                if (queryNode.get("cursor") != null && !StringUtils.isEmpty(queryNode.get("cursor").asText()))
+                {
+                    rest = rest + "&cursor=" + queryNode.get("cursor").asText();
+                }
+                
+                URL chatMessagesUrl = new URL(EndPoints.CHATMESSAGES_URL + "?" + rest);
+                ObjectNode messagesObjectNode =
+                    HTTPClientUtils.sendHTTPRequest(chatMessagesUrl, credential, null, HTTPMethod.GET);
+                return messagesObjectNode;
             }
             
-            URL chatMessagesUrl = new URL(EndPoints.CHATMESSAGES_URL + "?" + rest);
-            ObjectNode messagesObjectNode =
-                HTTPClientUtils.sendHTTPRequest(chatMessagesUrl, credential, null, HTTPMethod.GET);
-                
-            return messagesObjectNode;
+            return null;
         }
         catch (Exception e)
         {
@@ -144,7 +146,6 @@ public class EasemobIntfManager
      */
     public static void downloadHxFile(String hxFileURL, String secret, String destFilepath)
     {
-        
         Map<String, String> headers = new HashMap<String, String>();
         headers.put("share-secret", secret);
         try
