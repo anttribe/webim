@@ -66,7 +66,7 @@ DROP TABLE IF EXISTS `t_webim_messagebody`;
 CREATE TABLE `t_webim_messagebody` (
   `id` varchar(32) NOT NULL,
   `message_id` varchar(32) NOT NULL,
-  `messate_type` varchar(32) DEFAULT NULL,
+  `message_type` varchar(32) DEFAULT NULL,
   `msg` varchar(1024) DEFAULT NULL,
   `filename` varchar(256) DEFAULT NULL,
   `hx_file_url` varchar(1024) DEFAULT NULL,
