@@ -9,6 +9,7 @@ package org.anttribe.webim.ufe.facade;
 
 import org.anttribe.webim.base.core.domain.User;
 import org.anttribe.webim.ufe.facade.dto.SigninDTO;
+import org.anttribe.webim.ufe.facade.dto.SignupDTO;
 
 /**
  * @author zhaoyong
@@ -23,4 +24,11 @@ public interface UserFacade
      * @return User
      */
     User signin(SigninDTO signinDTO);
+    
+    /**
+     * 用户注册
+     * 
+     * @param signupDTO
+     */
+    void signup(SignupDTO signupDTO);
 }

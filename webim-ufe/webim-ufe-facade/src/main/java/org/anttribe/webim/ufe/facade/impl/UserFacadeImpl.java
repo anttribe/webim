@@ -8,11 +8,13 @@
 package org.anttribe.webim.ufe.facade.impl;
 
 import org.anttribe.webim.base.application.UserApplication;
+import org.anttribe.webim.base.core.common.errorno.SystemErrorNumber;
 import org.anttribe.webim.base.core.common.errorno.UserErrorNumber;
 import org.anttribe.webim.base.core.common.exception.UnifyException;
 import org.anttribe.webim.base.core.domain.User;
 import org.anttribe.webim.ufe.facade.UserFacade;
 import org.anttribe.webim.ufe.facade.dto.SigninDTO;
+import org.anttribe.webim.ufe.facade.dto.SignupDTO;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,5 +55,38 @@ public class UserFacadeImpl implements UserFacade
             throw new UnifyException(UserErrorNumber.USER_PASSWORD_ERROR);
         }
         return userInfo;
+    }
+    
+    @Override
+    public void signup(SignupDTO signupDTO)
+    {
+        if (StringUtils.isEmpty(signupDTO.getEmail()) || StringUtils.isEmpty(signupDTO.getUsername()))
+        {
+            // 参数不正确
+            throw new UnifyException(SystemErrorNumber.PARAMETER_IS_NULL);
+        }
+        
+        // 校验用户邮箱唯一
+        String userAccount = signupDTO.getEmail();
+        User userInfo = userApplication.findByUserAccount(userAccount);
+        if (null != userInfo)
+        {
+            throw new UnifyException(UserErrorNumber.EMAIL_HAS_BEAN_SIGNUPED);
+        }
+        
+        // 用户密码校验
+        if (signupDTO.getPassword().equals(signupDTO.getConfirmPassword()))
+        {
+            throw new UnifyException(UserErrorNumber.CONFIRM_PASSWORD_DISACCORD);
+        }
+        
+        String pwdCiphertext = "";
+        if (!StringUtils.isEmpty(signupDTO.getPassword()))
+        {
+            // 加密密码
+            pwdCiphertext = DigestUtils.md5Hex(signupDTO.getPassword());
+        }
+        
+        // 保存用户信息
     }
 }

@@ -39,4 +39,14 @@ public final class UserErrorNumber
      * 更新用户信息失败
      */
     public static final String UPDATE_USER_ERROR = "010004";
+    
+    /**
+     * 用户邮箱已经被注册过
+     */
+    public static final String EMAIL_HAS_BEAN_SIGNUPED = "010005";
+    
+    /**
+     * 用户确认密码不一致
+     */
+    public static final String CONFIRM_PASSWORD_DISACCORD = "010006";
 }
