@@ -217,12 +217,8 @@
 	</update>
 
 	<!-- queryAll: 查询所有数据 -->
-	<select id="queryAll" resultMap="MessageBody-resultMap-all">
+	<select id="queryAll" resultMap="MessageBody-resultMap">
 		<![CDATA[
-		    select a.*, b.*
-		    from t_webim_messagebody a
-		    join t_webim_message b
-		    on a.message_id = b.id
 		]]>
 	</select>
 

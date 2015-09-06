@@ -31,11 +31,6 @@ public class SignupDTO
     private String confirmPassword;
     
     /**
-     * 用户昵称
-     */
-    private String nickname;
-    
-    /**
      * 用户邮箱
      */
     private String email;
@@ -68,16 +63,6 @@ public class SignupDTO
     public void setConfirmPassword(String confirmPassword)
     {
         this.confirmPassword = confirmPassword;
-    }
-    
-    public String getNickname()
-    {
-        return nickname;
-    }
-    
-    public void setNickname(String nickname)
-    {
-        this.nickname = nickname;
     }
     
     public String getEmail()
