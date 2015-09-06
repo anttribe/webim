@@ -49,8 +49,7 @@ public class SignupController
     
     @RequestMapping("/doSignup")
     public ModelAndView doSignup(HttpServletRequest request, HttpServletResponse response, HttpSession httpSession,
-        @ModelAttribute
-        SignupDTO signupDTO)
+        @ModelAttribute SignupDTO signupDTO)
     {
         ModelAndView mv = new ModelAndView();
         
@@ -59,6 +58,7 @@ public class SignupController
         try
         {
             // 注册逻辑
+            userfacade.signup(signupDTO);
         }
         catch (UnifyException e)
         {
@@ -70,7 +70,7 @@ public class SignupController
         LOGGER.debug("User has signup successful, username {}, user-email: {}",
             signupDTO.getUsername(),
             signupDTO.getEmail());
-        
+            
         mv.setViewName("redirect:signin/signin");
         return mv;
     }

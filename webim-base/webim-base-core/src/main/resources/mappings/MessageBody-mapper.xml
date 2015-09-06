@@ -52,159 +52,177 @@
 			#{item.message.messageId})
 		</foreach>
 	</insert>
-	
+
 	<!-- update: 更新数据 -->
 	<update id="update" parameterType="org.anttribe.webim.base.core.domain.MessageBody">
 		update t_webim_messagebody
 		<trim prefix="set" suffixOverrides=",">
-             <trim prefix="msg = case id" suffix="end,">
-                 when #{messageBodyId} then #{msg}
-              </trim>
-              <trim prefix="filename = case id" suffix="end,">
-                 when #{messageBodyId} then #{filename}
-              </trim>
-              <trim prefix="hx_file_url = case id" suffix="end,">
-                 when #{messageBodyId} then #{hxFileUrl}
-              </trim>
-              <trim prefix="duration = case id" suffix="end,">
-                 when #{messageBodyId} then #{duration}
-              </trim>
-              <trim prefix="file_length = case id" suffix="end,">
-                 when #{messageBodyId} then #{fileLength}
-              </trim>
-              <trim prefix="secret = case id" suffix="end,">
-                 when #{messageBodyId} then #{secret}
-              </trim>
-              <trim prefix="hx_thumb_url = case id" suffix="end,">
-                 when #{messageBodyId} then #{hxThumbUrl}
-              </trim>
-              <trim prefix="thumb_secret = case id" suffix="end,">
-                 when #{messageBodyId} then #{thumbSecret}
-              </trim>
-              <trim prefix="filepath = case id" suffix="end,">
-                 when #{messageBodyId} then #{filepath}
-              </trim>
-              <trim prefix="thumbpath = case id" suffix="end,">
-                 when #{messageBodyId} then #{thumbpath}
-              </trim>
-              <trim prefix="address = case id" suffix="end,">
-                 when #{messageBodyId} then #{address}
-              </trim>
-              <trim prefix="lat = case id" suffix="end,">
-                 when #{messageBodyId} then #{lat}
-              </trim>
-              <trim prefix="lng = case id" suffix="end,">
-                 when #{messageBodyId} then #{lng}
-              </trim>
-          </trim>
-          where id = #{messageBodyId}
+			<trim prefix="msg = case id" suffix="end,">
+				when #{messageBodyId} then
+				#{msg}
+			</trim>
+			<trim prefix="filename = case id" suffix="end,">
+				when #{messageBodyId}
+				then #{filename}
+			</trim>
+			<trim prefix="hx_file_url = case id" suffix="end,">
+				when
+				#{messageBodyId} then #{hxFileUrl}
+			</trim>
+			<trim prefix="duration = case id" suffix="end,">
+				when #{messageBodyId}
+				then #{duration}
+			</trim>
+			<trim prefix="file_length = case id" suffix="end,">
+				when
+				#{messageBodyId} then #{fileLength}
+			</trim>
+			<trim prefix="secret = case id" suffix="end,">
+				when #{messageBodyId}
+				then #{secret}
+			</trim>
+			<trim prefix="hx_thumb_url = case id" suffix="end,">
+				when
+				#{messageBodyId} then #{hxThumbUrl}
+			</trim>
+			<trim prefix="thumb_secret = case id" suffix="end,">
+				when
+				#{messageBodyId} then #{thumbSecret}
+			</trim>
+			<trim prefix="filepath = case id" suffix="end,">
+				when #{messageBodyId}
+				then #{filepath}
+			</trim>
+			<trim prefix="thumbpath = case id" suffix="end,">
+				when #{messageBodyId}
+				then #{thumbpath}
+			</trim>
+			<trim prefix="address = case id" suffix="end,">
+				when #{messageBodyId}
+				then #{address}
+			</trim>
+			<trim prefix="lat = case id" suffix="end,">
+				when #{messageBodyId} then
+				#{lat}
+			</trim>
+			<trim prefix="lng = case id" suffix="end,">
+				when #{messageBodyId} then
+				#{lng}
+			</trim>
+		</trim>
+		where id = #{messageBodyId}
 	</update>
-	
+
 	<!-- batchUpdate: 批量更新数据 -->
 	<update id="batchUpdate" parameterType="java.util.List">
 		update t_webim_messagebody
 		<trim prefix="set" suffixOverrides=",">
-             <trim prefix="msg = case id" suffix="end,">
-                 <foreach collection="list" item="item">
-                     <if test="item.msg != null">
-                         when #{item.messageBodyId} then #{item.msg}
-                     </if>
-                 </foreach>
-              </trim>
-              <trim prefix="filename = case id" suffix="end,">
-                 <foreach collection="list" item="item">
-                     <if test="item.filename != null">
-                         when #{item.messageBodyId} then #{item.filename}
-                     </if>
-                 </foreach>
-              </trim>
-              <trim prefix="hx_file_url = case id" suffix="end,">
-                 <foreach collection="list" item="item">
-                     <if test="item.hxFileUrl != null">
-                         when #{item.messageBodyId} then #{item.hxFileUrl}
-                     </if>
-                 </foreach>
-              </trim>
-              <trim prefix="duration = case id" suffix="end,">
-                 <foreach collection="list" item="item">
-                     <if test="item.duration != null">
-                         when #{item.messageBodyId} then #{item.duration}
-                     </if>
-                 </foreach>
-              </trim>
-              <trim prefix="file_length = case id" suffix="end,">
-                 <foreach collection="list" item="item">
-                     <if test="item.fileLength != null">
-                         when #{item.messageBodyId} then #{item.fileLength}
-                     </if>
-                 </foreach>
-              </trim>
-              <trim prefix="secret = case id" suffix="end,">
-                 <foreach collection="list" item="item">
-                     <if test="item.secret != null">
-                         when #{item.messageBodyId} then #{item.secret}
-                     </if>
-                 </foreach>
-              </trim>
-              <trim prefix="hx_thumb_url = case id" suffix="end,">
-                 <foreach collection="list" item="item">
-                     <if test="item.hxThumbUrl != null">
-                         when #{item.messageBodyId} then #{item.hxThumbUrl}
-                     </if>
-                 </foreach>
-              </trim>
-              <trim prefix="thumb_secret = case id" suffix="end,">
-                 <foreach collection="list" item="item">
-                     <if test="item.thumbSecret != null">
-                         when #{item.messageBodyId} then #{item.thumbSecret}
-                     </if>
-                 </foreach>
-              </trim>
-              <trim prefix="filepath = case id" suffix="end,">
-                 <foreach collection="list" item="item">
-                     <if test="item.filepath != null">
-                         when #{item.messageBodyId} then #{item.filepath}
-                     </if>
-                 </foreach>
-              </trim>
-              <trim prefix="thumbpath = case id" suffix="end,">
-                 <foreach collection="list" item="item">
-                     <if test="item.thumbpath != null">
-                         when #{item.messageBodyId} then #{item.thumbpath}
-                     </if>
-                 </foreach>
-              </trim>
-              <trim prefix="address = case id" suffix="end,">
-                 <foreach collection="list" item="item">
-                     <if test="item.address != null">
-                         when #{item.messageBodyId} then #{item.address}
-                     </if>
-                 </foreach>
-              </trim>
-              <trim prefix="lat = case id" suffix="end,">
-                 <foreach collection="list" item="item">
-                     <if test="item.lat != null">
-                         when #{item.messageBodyId} then #{item.lat}
-                     </if>
-                 </foreach>
-              </trim>
-              <trim prefix="lng = case id" suffix="end,">
-                 <foreach collection="list" item="item">
-                     <if test="item.lng != null">
-                         when #{item.messageBodyId} then #{item.lng}
-                     </if>
-                 </foreach>
-              </trim>
-          </trim>
-          where id in 
-          <foreach collection="list" separator=", " item="item" open="(" close=")">
-              #{item.messageBodyId}
-          </foreach>
+			<trim prefix="msg = case id" suffix="end,">
+				<foreach collection="list" item="item">
+					<if test="item.msg != null">
+						when #{item.messageBodyId} then #{item.msg}
+					</if>
+				</foreach>
+			</trim>
+			<trim prefix="filename = case id" suffix="end,">
+				<foreach collection="list" item="item">
+					<if test="item.filename != null">
+						when #{item.messageBodyId} then #{item.filename}
+					</if>
+				</foreach>
+			</trim>
+			<trim prefix="hx_file_url = case id" suffix="end,">
+				<foreach collection="list" item="item">
+					<if test="item.hxFileUrl != null">
+						when #{item.messageBodyId} then #{item.hxFileUrl}
+					</if>
+				</foreach>
+			</trim>
+			<trim prefix="duration = case id" suffix="end,">
+				<foreach collection="list" item="item">
+					<if test="item.duration != null">
+						when #{item.messageBodyId} then #{item.duration}
+					</if>
+				</foreach>
+			</trim>
+			<trim prefix="file_length = case id" suffix="end,">
+				<foreach collection="list" item="item">
+					<if test="item.fileLength != null">
+						when #{item.messageBodyId} then #{item.fileLength}
+					</if>
+				</foreach>
+			</trim>
+			<trim prefix="secret = case id" suffix="end,">
+				<foreach collection="list" item="item">
+					<if test="item.secret != null">
+						when #{item.messageBodyId} then #{item.secret}
+					</if>
+				</foreach>
+			</trim>
+			<trim prefix="hx_thumb_url = case id" suffix="end,">
+				<foreach collection="list" item="item">
+					<if test="item.hxThumbUrl != null">
+						when #{item.messageBodyId} then #{item.hxThumbUrl}
+					</if>
+				</foreach>
+			</trim>
+			<trim prefix="thumb_secret = case id" suffix="end,">
+				<foreach collection="list" item="item">
+					<if test="item.thumbSecret != null">
+						when #{item.messageBodyId} then #{item.thumbSecret}
+					</if>
+				</foreach>
+			</trim>
+			<trim prefix="filepath = case id" suffix="end,">
+				<foreach collection="list" item="item">
+					<if test="item.filepath != null">
+						when #{item.messageBodyId} then #{item.filepath}
+					</if>
+				</foreach>
+			</trim>
+			<trim prefix="thumbpath = case id" suffix="end,">
+				<foreach collection="list" item="item">
+					<if test="item.thumbpath != null">
+						when #{item.messageBodyId} then #{item.thumbpath}
+					</if>
+				</foreach>
+			</trim>
+			<trim prefix="address = case id" suffix="end,">
+				<foreach collection="list" item="item">
+					<if test="item.address != null">
+						when #{item.messageBodyId} then #{item.address}
+					</if>
+				</foreach>
+			</trim>
+			<trim prefix="lat = case id" suffix="end,">
+				<foreach collection="list" item="item">
+					<if test="item.lat != null">
+						when #{item.messageBodyId} then #{item.lat}
+					</if>
+				</foreach>
+			</trim>
+			<trim prefix="lng = case id" suffix="end,">
+				<foreach collection="list" item="item">
+					<if test="item.lng != null">
+						when #{item.messageBodyId} then #{item.lng}
+					</if>
+				</foreach>
+			</trim>
+		</trim>
+		where id in
+		<foreach collection="list" separator=", " item="item" open="("
+			close=")">
+			#{item.messageBodyId}
+		</foreach>
 	</update>
 
 	<!-- queryAll: 查询所有数据 -->
-	<select id="queryAll" resultMap="MessageBody-resultMap">
+	<select id="queryAll" resultMap="MessageBody-resultMap-all">
 		<![CDATA[
+		    select a.*, b.*
+		    from t_webim_messagebody a
+		    join t_webim_message b
+		    on a.message_id = b.id
 		]]>
 	</select>
 

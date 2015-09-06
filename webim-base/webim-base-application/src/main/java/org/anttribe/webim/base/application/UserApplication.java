@@ -22,4 +22,11 @@ public interface UserApplication
      * @return
      */
     User findByUserAccount(String userAccount);
+    
+    /**
+     * 保存用户信息
+     * 
+     * @param userInfo
+     */
+    void saveUserInfo(User userInfo);
 }

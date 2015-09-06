@@ -5,7 +5,7 @@
  * 修   改  人: zhaoyong
  * 修改时间: 2015年8月6日
  */
-package org.anttribe.webim.base.application.impl;
+package org.anttribe.webim.base.application.easemob;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -13,6 +13,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.anttribe.webim.base.application.impl.ClientSecretCredential;
 import org.anttribe.webim.base.constants.EndPoints;
 import org.anttribe.webim.base.core.common.Global;
 import org.anttribe.webim.base.core.domain.Message;
@@ -33,10 +34,10 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
  * @author zhaoyong
  * @version 2015年8月6日
  */
-public class EasemobIntfManager
+public class EasemobMessageIntfManager
 {
     
-    private static Logger logger = LoggerFactory.getLogger(EasemobIntfManager.class);
+    private static Logger logger = LoggerFactory.getLogger(EasemobMessageIntfManager.class);
     
     private static JsonNodeFactory factory = new JsonNodeFactory(false);
     
@@ -127,8 +128,6 @@ public class EasemobIntfManager
                     HTTPClientUtils.sendHTTPRequest(chatMessagesUrl, credential, null, HTTPMethod.GET);
                 return messagesObjectNode;
             }
-            
-            return null;
         }
         catch (Exception e)
         {

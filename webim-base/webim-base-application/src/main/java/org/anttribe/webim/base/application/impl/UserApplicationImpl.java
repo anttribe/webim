@@ -29,4 +29,19 @@ public class UserApplicationImpl implements UserApplication
         }
         return null;
     }
+    
+    @Override
+    public void saveUserInfo(User userInfo)
+    {
+        if (null != userInfo)
+        {
+            userInfo.save();
+            
+            // 环信用户注册
+            userInfo.setHxUsername(userInfo.getUsername());
+            userInfo.setHxPassword(userInfo.getPassword());
+            
+            userInfo.update();
+        }
+    }
 }

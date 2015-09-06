@@ -20,6 +20,7 @@ import java.util.Map;
 import org.anttribe.component.io.FileUtils;
 import org.anttribe.component.lang.UUIDUtils;
 import org.anttribe.webim.base.application.MessageApplication;
+import org.anttribe.webim.base.application.easemob.EasemobMessageIntfManager;
 import org.anttribe.webim.base.core.common.Global;
 import org.anttribe.webim.base.core.domain.ChatType;
 import org.anttribe.webim.base.core.domain.Message;
@@ -120,7 +121,7 @@ public class MessageApplicationImpl implements MessageApplication
             }
         }
         
-        ObjectNode messagesObjectNode = EasemobIntfManager.getChatMessages(startMillis, limit, cursor);
+        ObjectNode messagesObjectNode = EasemobMessageIntfManager.getChatMessages(startMillis, limit, cursor);
         if (null != messagesObjectNode)
         {
             // 处理消息数据
@@ -316,7 +317,7 @@ public class MessageApplicationImpl implements MessageApplication
             
             // 以当前时间描述命名该文件
             filepath += "/" + filenameGenerator.generate("", "", suffix);
-            EasemobIntfManager.downloadHxFile(hxFileURL, secret, abstractPath + filepath);
+            EasemobMessageIntfManager.downloadHxFile(hxFileURL, secret, abstractPath + filepath);
         }
         return filepath;
     }

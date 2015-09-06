@@ -46,6 +46,11 @@ public final class UserErrorNumber
     public static final String EMAIL_HAS_BEAN_SIGNUPED = "010005";
     
     /**
+     * 用户名存在
+     */
+    public static final String USERNAME_EXIST_ERROR = "010006";
+    
+    /**
      * 用户确认密码不一致
      */
     public static final String CONFIRM_PASSWORD_DISACCORD = "010006";

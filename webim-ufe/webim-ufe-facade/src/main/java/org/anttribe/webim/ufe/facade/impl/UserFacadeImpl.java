@@ -13,6 +13,7 @@ import org.anttribe.webim.base.core.common.errorno.UserErrorNumber;
 import org.anttribe.webim.base.core.common.exception.UnifyException;
 import org.anttribe.webim.base.core.domain.User;
 import org.anttribe.webim.ufe.facade.UserFacade;
+import org.anttribe.webim.ufe.facade.assembler.UserAssembler;
 import org.anttribe.webim.ufe.facade.dto.SigninDTO;
 import org.anttribe.webim.ufe.facade.dto.SignupDTO;
 import org.apache.commons.codec.digest.DigestUtils;
@@ -74,19 +75,22 @@ public class UserFacadeImpl implements UserFacade
             throw new UnifyException(UserErrorNumber.EMAIL_HAS_BEAN_SIGNUPED);
         }
         
+        // 用户名唯一
+        userAccount = signupDTO.getUsername();
+        userInfo = userApplication.findByUserAccount(userAccount);
+        if (null != userInfo)
+        {
+            throw new UnifyException(UserErrorNumber.USERNAME_EXIST_ERROR);
+        }
+        
         // 用户密码校验
         if (signupDTO.getPassword().equals(signupDTO.getConfirmPassword()))
         {
             throw new UnifyException(UserErrorNumber.CONFIRM_PASSWORD_DISACCORD);
         }
         
-        String pwdCiphertext = "";
-        if (!StringUtils.isEmpty(signupDTO.getPassword()))
-        {
-            // 加密密码
-            pwdCiphertext = DigestUtils.md5Hex(signupDTO.getPassword());
-        }
-        
         // 保存用户信息
+        userInfo = UserAssembler.toEntity(signupDTO);
+        userApplication.saveUserInfo(userInfo);
     }
 }
