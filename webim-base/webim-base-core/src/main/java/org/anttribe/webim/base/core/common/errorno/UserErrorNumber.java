@@ -53,5 +53,5 @@ public final class UserErrorNumber
     /**
      * 用户确认密码不一致
      */
-    public static final String CONFIRM_PASSWORD_DISACCORD = "010006";
+    public static final String CONFIRM_PASSWORD_DISACCORD = "010007";
 }

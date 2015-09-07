@@ -84,7 +84,7 @@ public class UserFacadeImpl implements UserFacade
         }
         
         // 用户密码校验
-        if (signupDTO.getPassword().equals(signupDTO.getConfirmPassword()))
+        if (!signupDTO.getPassword().equals(signupDTO.getConfirmPassword()))
         {
             throw new UnifyException(UserErrorNumber.CONFIRM_PASSWORD_DISACCORD);
         }

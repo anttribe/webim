@@ -7,6 +7,9 @@
  */
 package org.anttribe.webim.base.application.impl;
 
+import java.sql.Timestamp;
+
+import org.anttribe.component.lang.UUIDUtils;
 import org.anttribe.webim.base.application.UserApplication;
 import org.anttribe.webim.base.core.domain.User;
 import org.apache.commons.lang.StringUtils;
@@ -35,12 +38,17 @@ public class UserApplicationImpl implements UserApplication
     {
         if (null != userInfo)
         {
+            userInfo.setUserId(UUIDUtils.getRandomUUID());
+            userInfo.setCreateTime(new Timestamp(System.currentTimeMillis()));
             userInfo.save();
             
             // 环信用户注册
             userInfo.setHxUsername(userInfo.getUsername());
             userInfo.setHxPassword(userInfo.getPassword());
             
+            // 更新用户信息
+            userInfo.setAvailable(Boolean.TRUE);
+            userInfo.setUpdateTime(new Timestamp(System.currentTimeMillis()));
             userInfo.update();
         }
     }

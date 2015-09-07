@@ -19,6 +19,14 @@
 		<result property="hxPassword" column="hx_password" />
 	</resultMap>
 
+	<!-- insert: 保存用户信息 -->
+	<insert id="insert" parameterType="org.anttribe.webim.base.core.domain.User">
+        <![CDATA[
+            INSERT INTO t_webim_user(id, username, password, nickname, email, mobile, avatar, signature, create_time, available, hx_username, hx_password)
+                VALUES(#{userId}, #{username}, #{password}, #{nickname}, #{email}, #{mobile}, #{avatar}, #{signature}, #{createTime}, #{available}, #{hxUsername}, #{hxPassword})
+        ]]>
+	</insert>
+
 	<!-- update: 更新用户信息 -->
 	<update id="update" parameterType="org.anttribe.webim.base.core.domain.User">
 		UPDATE t_webim_user

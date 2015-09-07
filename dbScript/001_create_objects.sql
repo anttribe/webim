@@ -41,6 +41,7 @@ CREATE TABLE `t_webim_user` (
 -- Records of t_webim_user
 -- ----------------------------
 INSERT INTO `t_webim_user`(`id`, `username`, `password`, `nickname`, `email`, `mobile`, `avatar`, `signature`, `create_time`, `update_time`, `latest_login_time`, `available`, `hx_username`, `hx_password`) VALUES ('1', 'anttribe', 'e10adc3949ba59abbe56e057f20f883e', null, null, null, null, null, null, null, null, '1', 'anttribe', '123456');
+INSERT INTO `t_webim_user`(`id`, `username`, `password`, `nickname`, `email`, `mobile`, `avatar`, `signature`, `create_time`, `update_time`, `latest_login_time`, `available`, `hx_username`, `hx_password`) VALUES ('2', 'test', 'e10adc3949ba59abbe56e057f20f883e', null, null, null, null, null, null, null, null, '1', 'test', '123456');
 
 -- ----------------------------
 -- Table structure for `t_webim_message`
