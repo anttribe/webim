@@ -11,9 +11,12 @@ import java.sql.Timestamp;
 
 import org.anttribe.component.lang.UUIDUtils;
 import org.anttribe.webim.base.application.UserApplication;
+import org.anttribe.webim.base.application.easemob.EasemobUserIntfManager;
 import org.anttribe.webim.base.core.domain.User;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Service;
+
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 /**
  * @author zhaoyong
@@ -43,10 +46,14 @@ public class UserApplicationImpl implements UserApplication
             userInfo.save();
             
             // 环信用户注册
-            userInfo.setHxUsername(userInfo.getUsername());
-            userInfo.setHxPassword(userInfo.getPassword());
+            ObjectNode signupResNode =
+                EasemobUserIntfManager.signupHxUser(userInfo.getUsername(),
+                    userInfo.getPassword(),
+                    userInfo.getNickname());
             
             // 更新用户信息
+            userInfo.setHxUsername(userInfo.getUsername());
+            userInfo.setHxPassword(userInfo.getPassword());
             userInfo.setAvailable(Boolean.TRUE);
             userInfo.setUpdateTime(new Timestamp(System.currentTimeMillis()));
             userInfo.update();

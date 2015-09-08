@@ -37,7 +37,9 @@
 			<if test="null != mobile and '' != mobile">mobile = #{mobile},</if>
 			<if test="null != email and '' != email">email = #{email},</if>
 			<if test="null != avatar and '' != avatar">avatar = #{avatar},</if>
-			<if test="null != signature and '' != signature">signature = #{signature}</if>
+			<if test="null != signature and '' != signature">signature = #{signature},</if>
+			<if test="null != hxUsername and '' != hxUsername">hx_username = #{hxUsername},</if>
+			<if test="null != hxPassword and '' != hxPassword">hx_password = #{hxPassword},</if>
 		</set>
 		WHERE id = #{userId}
 	</update>

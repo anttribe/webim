@@ -71,7 +71,7 @@ public class SignupController
             signupDTO.getUsername(),
             signupDTO.getEmail());
             
-        mv.setViewName("redirect:signin/signin");
+        mv.setViewName("redirect:signin");
         return mv;
     }
 }

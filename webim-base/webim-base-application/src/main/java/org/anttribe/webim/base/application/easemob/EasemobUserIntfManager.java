@@ -51,7 +51,7 @@ public class EasemobUserIntfManager
         userInfoNode.put("nickname", nickname);
         
         ObjectNode signupResNode =
-            HTTPClientUtils.sendHTTPRequest(EndPoints.USERS_URL, credential, userInfoNode, HTTPMethod.GET);
+            HTTPClientUtils.sendHTTPRequest(EndPoints.USERS_URL, credential, userInfoNode, HTTPMethod.POST);
         return signupResNode;
     }
 }

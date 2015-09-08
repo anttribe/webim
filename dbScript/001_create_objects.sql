@@ -32,8 +32,8 @@ CREATE TABLE `t_webim_user` (
   `update_time` timestamp NULL DEFAULT NULL COMMENT '数据更新时间',
   `latest_login_time` timestamp NULL DEFAULT NULL COMMENT '用户最后一次登录时间',
   `available` varchar(8) DEFAULT '1' COMMENT '是否启用 0:禁用; 1:启用',
-  `hx_username` varchar(256) NOT NULL COMMENT '环信用户名称',
-  `hx_password` varchar(128) NOT NULL COMMENT '环信用户密码',
+  `hx_username` varchar(256) COMMENT '环信用户名称',
+  `hx_password` varchar(128) COMMENT '环信用户密码',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
