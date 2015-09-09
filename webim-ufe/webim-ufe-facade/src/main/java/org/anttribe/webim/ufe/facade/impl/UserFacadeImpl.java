@@ -93,4 +93,18 @@ public class UserFacadeImpl implements UserFacade
         userInfo = UserAssembler.toEntity(signupDTO);
         userApplication.saveUserInfo(userInfo);
     }
+    
+    @Override
+    public boolean validateEmailUnique(String email)
+    {
+        // TODO Auto-generated method stub
+        return false;
+    }
+    
+    @Override
+    public boolean validateUsernameUnique(String username)
+    {
+        // TODO Auto-generated method stub
+        return false;
+    }
 }

@@ -31,4 +31,20 @@ public interface UserFacade
      * @param signupDTO
      */
     void signup(SignupDTO signupDTO);
+    
+    /**
+     * 校验用户邮箱唯一性
+     * 
+     * @param email
+     * @return boolean
+     */
+    boolean validateEmailUnique(String email);
+    
+    /**
+     * 校验用户名唯一
+     * 
+     * @param email
+     * @return boolean
+     */
+    boolean validateUsernameUnique(String username);
 }

@@ -19,7 +19,7 @@
                     <c:if test="${not empty errorNo}">
                         <div class="alert alert-danger tc"><spring:message code="app.errorNo.${errorNo}" text="" /></div>
                     </c:if>
-                    <form action='<c:url value="/doSignup" />' method="post">
+                    <form id="signup-form" action='<c:url value="/doSignup" />' method="post">
                         <div class="form-group">
                             <div class="input-group">
                                 <div class="input-group-addon"><span class="glyphicon glyphicon-envelope"></span></div>
@@ -48,12 +48,64 @@
                         <div class="center-block">
                             <button type="submit" class="btn btn-success btn-signup"><spring:message code="app.user.action.signup" /></button>
                         </div>
+                        <div class="pt10"><a href="<c:url value="/signin" />"><spring:message code="app.user.action.signin.link" /></a></div>
                     </form>
                 </div>
             </div>
             </div>
         </div>
+        <script type="text/javascript" src="static/assets/jquery/jquery-1.11.1.js"></script>
+        <script type="text/javascript" src="static/assets/bootstrap/js/bootstrap.min.js"></script>
+        <script type="text/javascript" src="static/assets/jquery-validation/jquery.validate.min.js"></script>
+        <script type="text/javascript">
+            $('#signup-form').validate({
+            	rules: {
+            		email: {
+            			required:true,
+                        email:true,
+                        remote: {
+                        	type: 'POST',
+                        	url: 'signup/emailUnique',
+                        	data: {
+                        		email: function(){return $('#email').val();}
+                        	}
+                        }
+            		},
+            		username: {
+            			required:true,
+            			remote: {
+                        	type: 'POST',
+                        	url: 'signup/usernameUnique',
+                        	data: {
+                        		username: function(){ return $('#username').val(); }
+                        	}
+                        }
+            		},
+            		password: {
+            			required:true
+            		},
+            		confirmPassword: {
+            			required:true,
+            			equalTo: '#password'
+            		}
+            	},
+            	messages: {
+            		email: {
+            			required:true,
+                        email:true
+            		},
+            		username: {
+            			required:true
+            		},
+            		password: {
+            			required:true
+            		},
+            		confirmPassword: {
+            			required:true,
+            			equalTo: '#password'
+            		}
+            	}
+            });
+        </script>
     </body>
-    <script type="text/javascript" src="static/assets/jquery/jquery-1.11.1.js"></script>
-    <script type="text/javascript" src="static/assets/bootstrap/js/bootstrap.min.js"></script>
 </html>

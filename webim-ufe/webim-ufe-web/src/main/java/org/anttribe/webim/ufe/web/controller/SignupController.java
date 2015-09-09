@@ -7,6 +7,9 @@
  */
 package org.anttribe.webim.ufe.web.controller;
 
+import java.io.IOException;
+import java.io.PrintWriter;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -70,8 +73,41 @@ public class SignupController
         LOGGER.debug("User has signup successful, username {}, user-email: {}",
             signupDTO.getUsername(),
             signupDTO.getEmail());
-            
+        
         mv.setViewName("redirect:signin");
         return mv;
+    }
+    
+    /**
+     * 校验邮箱唯一
+     * 
+     * @param signupDTO
+     * @throws IOException
+     */
+    @RequestMapping("/signup/emailUnique")
+    public void validateEmailUnique(HttpServletRequest request, HttpServletResponse response, HttpSession httpSession,
+        @ModelAttribute SignupDTO signupDTO)
+        throws IOException
+    {
+        
+        PrintWriter out = response.getWriter();
+        out.write(Boolean.FALSE.toString());
+        out.flush();
+    }
+    
+    /**
+     * 校验用户名唯一
+     * 
+     * @param signupDTO
+     * @throws IOException
+     */
+    @RequestMapping("/signup/usernameUnique")
+    public void validateUsernameUnique(HttpServletRequest request, HttpServletResponse response,
+        HttpSession httpSession, @ModelAttribute SignupDTO signupDTO)
+        throws IOException
+    {
+        PrintWriter out = response.getWriter();
+        out.write(Boolean.FALSE.toString());
+        out.flush();
     }
 }
