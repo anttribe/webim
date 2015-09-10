@@ -8,6 +8,8 @@
 package org.anttribe.webim.base.core.domain;
 
 import java.sql.Timestamp;
+import java.util.List;
+import java.util.Map;
 
 import org.anttribe.opengadget.core.domain.MybatisAbstractEntity;
 
@@ -98,6 +100,19 @@ public class User extends MybatisAbstractEntity
         String statement =
             (new StringBuilder()).append(User.class.getCanonicalName()).append(".queryByUserAccount").toString();
         return getSqlSessionTemplate().selectOne(statement, userAccount);
+    }
+    
+    /**
+     * 根据确定条件查询用户
+     * 
+     * @param criteria Map<String, Object>
+     * @return List<User>
+     */
+    public static List<User> findByEnsureCriteria(Map<String, Object> criteria)
+    {
+        String statement =
+            (new StringBuilder()).append(User.class.getCanonicalName()).append(".queryByEnsureCriteria").toString();
+        return getSqlSessionTemplate().selectList(statement, criteria);
     }
     
     public String getUserId()
@@ -229,12 +244,12 @@ public class User extends MybatisAbstractEntity
     {
         this.hxPassword = hxPassword;
     }
-
+    
     public String getHxUsername()
     {
         return hxUsername;
     }
-
+    
     public void setHxUsername(String hxUsername)
     {
         this.hxUsername = hxUsername;

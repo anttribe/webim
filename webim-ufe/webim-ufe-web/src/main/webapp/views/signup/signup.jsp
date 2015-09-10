@@ -59,6 +59,17 @@
         <script type="text/javascript" src="static/assets/jquery-validation/jquery.validate.min.js"></script>
         <script type="text/javascript">
             $('#signup-form').validate({
+            	errorElement: 'span',
+            	wrapper: 'div',
+            	errorPlacement: function(error, element){
+            		error.addClass('tooltip-error left').css({'left': element.position().left + element.outerWidth()}).appendTo(element.parent());
+            		// 解决错误提示信息不随窗口的变化而变化的问题
+            		$(window).bind({
+            			resize: function(){
+            				error.css({'left': element.position().left + element.outerWidth()});
+            			}
+            		});
+            	},
             	rules: {
             		email: {
             			required:true,
@@ -91,18 +102,20 @@
             	},
             	messages: {
             		email: {
-            			required:true,
-                        email:true
+            			required: '<spring:message code="app.common.error.required" />',
+                        email: '<spring:message code="app.errorNo.010008" />',
+                        remote: '<spring:message code="app.errorNo.010005" />'
             		},
             		username: {
-            			required:true
+            			required: '<spring:message code="app.common.error.required" />',
+            			remote: '<spring:message code="app.errorNo.010006" />'
             		},
             		password: {
-            			required:true
+            			required: '<spring:message code="app.common.error.required" />'
             		},
             		confirmPassword: {
-            			required:true,
-            			equalTo: '#password'
+            			required: '<spring:message code="app.common.error.required" />',
+            			equalTo: '<spring:message code="app.errorNo.010007" />'
             		}
             	}
             });

@@ -73,7 +73,7 @@ public class SignupController
         LOGGER.debug("User has signup successful, username {}, user-email: {}",
             signupDTO.getUsername(),
             signupDTO.getEmail());
-        
+            
         mv.setViewName("redirect:signin");
         return mv;
     }
@@ -87,11 +87,10 @@ public class SignupController
     @RequestMapping("/signup/emailUnique")
     public void validateEmailUnique(HttpServletRequest request, HttpServletResponse response, HttpSession httpSession,
         @ModelAttribute SignupDTO signupDTO)
-        throws IOException
+            throws IOException
     {
-        
         PrintWriter out = response.getWriter();
-        out.write(Boolean.FALSE.toString());
+        out.write(String.valueOf(userfacade.validateEmailUnique(signupDTO.getEmail())));
         out.flush();
     }
     
@@ -104,10 +103,10 @@ public class SignupController
     @RequestMapping("/signup/usernameUnique")
     public void validateUsernameUnique(HttpServletRequest request, HttpServletResponse response,
         HttpSession httpSession, @ModelAttribute SignupDTO signupDTO)
-        throws IOException
+            throws IOException
     {
         PrintWriter out = response.getWriter();
-        out.write(Boolean.FALSE.toString());
+        out.write(String.valueOf(userfacade.validateUsernameUnique(signupDTO.getUsername())));
         out.flush();
     }
 }

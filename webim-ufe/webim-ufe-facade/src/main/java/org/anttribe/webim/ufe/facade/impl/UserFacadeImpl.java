@@ -69,7 +69,7 @@ public class UserFacadeImpl implements UserFacade
         
         // 校验用户邮箱唯一
         String userAccount = signupDTO.getEmail();
-        User userInfo = userApplication.findByUserAccount(userAccount);
+        User userInfo = userApplication.findByEmail(userAccount);
         if (null != userInfo)
         {
             throw new UnifyException(UserErrorNumber.EMAIL_HAS_BEAN_SIGNUPED);
@@ -77,7 +77,7 @@ public class UserFacadeImpl implements UserFacade
         
         // 用户名唯一
         userAccount = signupDTO.getUsername();
-        userInfo = userApplication.findByUserAccount(userAccount);
+        userInfo = userApplication.findByUsername(userAccount);
         if (null != userInfo)
         {
             throw new UnifyException(UserErrorNumber.USERNAME_EXIST_ERROR);
@@ -97,14 +97,22 @@ public class UserFacadeImpl implements UserFacade
     @Override
     public boolean validateEmailUnique(String email)
     {
-        // TODO Auto-generated method stub
-        return false;
+        User user = userApplication.findByEmail(email);
+        if (null != user)
+        {
+            return Boolean.TRUE;
+        }
+        return Boolean.FALSE;
     }
     
     @Override
     public boolean validateUsernameUnique(String username)
     {
-        // TODO Auto-generated method stub
-        return false;
+        User user = userApplication.findByUsername(username);
+        if (null != user)
+        {
+            return Boolean.TRUE;
+        }
+        return Boolean.FALSE;
     }
 }

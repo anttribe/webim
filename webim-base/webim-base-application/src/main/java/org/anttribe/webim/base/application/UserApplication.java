@@ -19,9 +19,25 @@ public interface UserApplication
      * 根据用户帐号获取用户信息
      * 
      * @param userAccount
-     * @return
+     * @return User
      */
     User findByUserAccount(String userAccount);
+    
+    /**
+     * 根据用户名查询用户信息
+     * 
+     * @param username
+     * @return User
+     */
+    User findByUsername(String username);
+    
+    /**
+     * 根据用户邮箱查询用户
+     * 
+     * @param email
+     * @return User
+     */
+    User findByEmail(String email);
     
     /**
      * 保存用户信息

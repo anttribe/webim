@@ -77,4 +77,21 @@
 		           OR t.email = #{userAccount}
 		]]>
 	</select>
+
+	<!-- queryByEnsureCriteria: 根据确定条件查询用户 -->
+	<select id="queryByEnsureCriteria" resultMap="User-resultMap"
+		parameterType="Map">
+		<![CDATA[
+		SELECT id, username, password, nickname, email, mobile, avatar, signature, create_time, update_time, latest_login_time, available, hx_username, hx_password
+		    FROM t_webim_user t
+		]]>
+		<where>
+		    <if test="username != null and username != ''">
+		        AND username = #{username}
+		    </if>
+		    <if test="email != null and email != ''">
+		        AND email = #{email}
+		    </if>
+		</where>
+	</select>
 </mapper>

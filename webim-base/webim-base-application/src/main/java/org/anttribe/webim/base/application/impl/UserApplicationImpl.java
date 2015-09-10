@@ -8,11 +8,15 @@
 package org.anttribe.webim.base.application.impl;
 
 import java.sql.Timestamp;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import org.anttribe.component.lang.UUIDUtils;
 import org.anttribe.webim.base.application.UserApplication;
 import org.anttribe.webim.base.application.easemob.EasemobUserIntfManager;
 import org.anttribe.webim.base.core.domain.User;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Service;
 
@@ -37,6 +41,38 @@ public class UserApplicationImpl implements UserApplication
     }
     
     @Override
+    public User findByUsername(String username)
+    {
+        if (!StringUtils.isEmpty(username))
+        {
+            Map<String, Object> criteria = new HashMap<String, Object>();
+            criteria.put("username", username);
+            List<User> users = User.findByEnsureCriteria(criteria);
+            if (!CollectionUtils.isEmpty(users))
+            {
+                return users.get(0);
+            }
+        }
+        return null;
+    }
+    
+    @Override
+    public User findByEmail(String email)
+    {
+        if (!StringUtils.isEmpty(email))
+        {
+            Map<String, Object> criteria = new HashMap<String, Object>();
+            criteria.put("email", email);
+            List<User> users = User.findByEnsureCriteria(criteria);
+            if (!CollectionUtils.isEmpty(users))
+            {
+                return users.get(0);
+            }
+        }
+        return null;
+    }
+    
+    @Override
     public void saveUserInfo(User userInfo)
     {
         if (null != userInfo)
@@ -46,11 +82,10 @@ public class UserApplicationImpl implements UserApplication
             userInfo.save();
             
             // 环信用户注册
-            ObjectNode signupResNode =
-                EasemobUserIntfManager.signupHxUser(userInfo.getUsername(),
-                    userInfo.getPassword(),
-                    userInfo.getNickname());
-            
+            ObjectNode signupResNode = EasemobUserIntfManager.signupHxUser(userInfo.getUsername(),
+                userInfo.getPassword(),
+                userInfo.getNickname());
+                
             // 更新用户信息
             userInfo.setHxUsername(userInfo.getUsername());
             userInfo.setHxPassword(userInfo.getPassword());

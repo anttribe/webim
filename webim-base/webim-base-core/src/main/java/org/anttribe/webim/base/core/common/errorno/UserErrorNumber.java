@@ -54,4 +54,14 @@ public final class UserErrorNumber
      * 用户确认密码不一致
      */
     public static final String CONFIRM_PASSWORD_DISACCORD = "010007";
+    
+    /**
+     * 邮箱格式错误
+     */
+    public static final String EMAIL_PATTERN_ERROR = "010008";
+    
+    /**
+     * 用户名格式错误
+     */
+    public static final String USERNAME_PATTERN_ERROR = "010009";
 }
