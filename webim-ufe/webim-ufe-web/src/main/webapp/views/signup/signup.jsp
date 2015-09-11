@@ -59,6 +59,7 @@
         <script type="text/javascript" src="static/assets/jquery-validation/jquery.validate.min.js"></script>
         <script type="text/javascript">
             $('#signup-form').validate({
+            	focusCleanup: true,
             	errorElement: 'span',
             	wrapper: 'div',
             	errorPlacement: function(error, element){
