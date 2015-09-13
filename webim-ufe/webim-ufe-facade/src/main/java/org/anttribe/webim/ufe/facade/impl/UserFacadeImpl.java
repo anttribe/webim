@@ -100,9 +100,9 @@ public class UserFacadeImpl implements UserFacade
         User user = userApplication.findByEmail(email);
         if (null != user)
         {
-            return Boolean.TRUE;
+            return Boolean.FALSE;
         }
-        return Boolean.FALSE;
+        return Boolean.TRUE;
     }
     
     @Override
@@ -111,8 +111,8 @@ public class UserFacadeImpl implements UserFacade
         User user = userApplication.findByUsername(username);
         if (null != user)
         {
-            return Boolean.TRUE;
+            return Boolean.FALSE;
         }
-        return Boolean.FALSE;
+        return Boolean.TRUE;
     }
 }

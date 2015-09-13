@@ -676,6 +676,7 @@
         	    im.conn.setPresence();
         	},
         	handleOnError: function(e) {  //异常情况下的处理方法
+        		console.log(e);
         		alert(e.msg);
         	}
         };
