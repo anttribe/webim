@@ -10,7 +10,7 @@ body { padding: 0; background: #FFFFFF; color: rgba(0,0,0,.75); font-size: 13px;
 .nav-flat>li.active { border-bottom: 2px solid #cccccc; }
 .nav-flat>li>a { border-right: 1px solid #d8d8d8; padding: 2px 15px; }
 .nav-flat>li:last-child>a { border-right: 0; }
-.nav-flat>li.active>a, .nav-flat>li.active>a:focus, .nav-flat>li.active>a:hover { color: #555; font-weight: bold; cursor: pointer; }
+.nav-flat>li.active>a, .nav-flat>li.active>a:focus, .nav-flat>li.active>a:hover { color: #555; background: none !important; font-weight: bold; cursor: pointer; }
 .nav-flat>li>a:hover { background: none !important; color: #555; font-weight: bold; }
 
 .panel-heading, .panel-footer { border: none; }

@@ -12,7 +12,9 @@ body:before { content: ''; width: 100%; height: 100%; position: absolute; left: 
 .im-main-panel .panel-header .list-item, .chat-main-panel .panel-header .list-item { border: none; }
 .im-main-panel .list-item .list-item-avatar, .chat-main-panel .list-item .list-item-avatar { float: left; position: relative; }
 .im-main-panel .list-item .list-item-avatar img, .chat-main-panel .list-item .list-item-avatar img { width: 36px; height: 36px; }
-.im-main-panel .list-item .list-item-name, .chat-main-panel .list-item .list-item-name { line-height: 36px; padding: 0 0 0 40px; }
+.im-main-panel .list-item .list-item-name, .chat-main-panel .list-item .list-item-name { line-height: 36px; padding: 0 0 0 6px; }
+.im-main-panel .list-item .list-item-operate { float: right; }
+
 .chat-main-panel .panel-body { padding: 6px !important; }
 .im-main-panel .im-body { width: 100%; position: absolute; top: 56px; bottom: 56px; }
 .im-main-panel .im-body .im-body-content { position: relative; min-height: 100%; max-height: 100%; overflow-y: auto; overflow-x: hidden; }
@@ -35,13 +37,14 @@ body:before { content: ''; width: 100%; height: 100%; position: absolute; left: 
 .im-main-panel .panel-footer .tabs .active { color: #fff; background: #333; border-left-color: #222; text-shadow: 0 1px 0 #000; box-shadow: inset 0 0 10px #111; -webkit-box-shadow: inset 0 0 10px #111; -moz-box-shadow: inset 0 0 10px #111; }
 .im-main-panel .panel-footer .tabs a { color: #fff; }
 .im-main-panel .panel-footer .tabs a:hover { color: #fff; background: #333; box-shadow: inset 0 0 10px #111; -webkit-box-shadow: inset 0 0 10px #111; -moz-box-shadow: inset 0 0 10px #111; }
+.im-main-panel .panel-footer .tabs .active>a { background: #333; }
 
 .wraper .chat-container .chat-window { width: 100%; height: 100%; }
 .wraper .chat-container .chat-window .panel-close { line-height: 100%; position: absolute; right: 16px; top: 22px; cursor: pointer; }
 .wraper .chat-container .chat-window .panel-footer .chat-toolbar { height: 100%; line-height: 100%; padding: 6px; }
 .chat-toolbar .chat-toolbar-btn { display: inline-block; width: 26px; position: relative; padding: 6px 2px; cursor: pointer; }
-.chat-toolbar .chat-toolbar-btn .chat-emotion { display: block; width: 22px; height: 32px; background: url(../img/sprite_icons.png) -260px -170px; }
-.chat-toolbar .chat-toolbar-btn .chat-file { display: block; width: 22px; height: 32px; background: url(../img/sprite_icons.png) -46px -136px; }
+.chat-toolbar .chat-toolbar-btn .chat-emotion { display: block; width: 22px; height: 32px; background: url(../img/sprite_icons.png) -43px -6px; }
+.chat-toolbar .chat-toolbar-btn .chat-file { display: block; width: 22px; height: 32px; background: url(../img/sprite_icons.png) -14px -176px; }
 .chat-toolbar .chat-input { position: absolute; left: 68px; right: 80px; top: 4px;}
 .chat-toolbar .chat-input .chat-textarea { width: 100%; resize: none; margin: 8px; padding: 8px; height: 32px; max-height: 100px; border-radius: 6px; -webkit-border-radius: 6px; -moz-border-radius: 6px; white-space: pre-wrap; word-wrap: break-word; }
 .chat-toolbar .chat-send-btn { position: absolute; right: 10px; top: 4px; margin: 6px 0; }
@@ -67,3 +70,8 @@ body:before { content: ''; width: 100%; height: 100%; position: absolute; left: 
 .emotion-panel .emotion-content .emotion { float: left; font-size: 0; text-indent: -999em; border-bottom: 1px solid #F0F0F0; border-right: 1px solid #F0F0F0; cursor: pointer; padding: 4px; }
 .emotion-panel .emotion-content .emotion img { width: 22px; height: 22px; }
 
+/* 用户操作列表 */
+.operate-panel { position: absolute; top: 36px; right: -8px; z-index: 999; width: 120px; height: 80px; background-color: #FFFFFF; border-radius: 4px; border: 1px solid #dedede; } 
+.operate-panel .operate-content { position: relative; width: 100%; height: 100%; padding: 10px; }
+.operate-panel .operate-content:before { position: absolute; top: -14px; right: 8px; border: 6px solid transparent; content: " "; border-bottom-color: #FFFFFF; border-bottom-width: 10px; } 
+.operate-panel .operate-content .operate { }

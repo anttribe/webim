@@ -1,6 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@taglib prefix="spring" uri="http://www.springframework.org/tags" %>
+
 <!DOCTYPE html>
 <html lang="en_US">
     <head>
@@ -20,7 +21,13 @@
                     <div class="panel-heading panel-header">
                         <div class="list-item">
                             <a href="#" class="list-item-avatar"><img src="static/static/img/avatar/roster_avatar_male.png" /></a>
-                            <p class="list-item-name">${user.username}</p>
+                            <span class="list-item-name">${user.username}</span>
+                            <span class="list-item-operate"><i class="glyphicon glyphicon-align-justify"></i></span>
+                            <div class="operate-panel" style="display: block;">
+                                <div class="operate-content">
+                                    <div class="operate"><i class=""></i>加好友</div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                     <div class="panel-body im-body">
