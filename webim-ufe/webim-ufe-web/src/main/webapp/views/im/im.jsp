@@ -11,7 +11,6 @@
         <link rel="stylesheet" type="text/css" href="static/static/css/base.css" />
         <link rel="stylesheet" type="text/css" href="static/static/css/common.css" />
         <link rel="stylesheet" type="text/css" href="static/static/css/webim.css" />
-        
         <link rel="stylesheet" type="text/css" href="static/assets/jquery-fileupload/css/jquery.fileupload.css" />
     </head>
     <body>
@@ -23,9 +22,13 @@
                             <a href="#" class="list-item-avatar"><img src="static/static/img/avatar/roster_avatar_male.png" /></a>
                             <span class="list-item-name">${user.username}</span>
                             <span class="list-item-operate"><i class="glyphicon glyphicon-align-justify"></i></span>
-                            <div class="operate-panel" style="display: block;">
+                            <div class="operate-panel" style="display: none;">
                                 <div class="operate-content">
-                                    <div class="operate"><i class=""></i>加好友</div>
+                                    <div class="operate operate-launchchat"><i class="glyphicon glyphicon-comment"></i> 发起聊天</div>
+                                    <div class="operate operate-addfriend"><i class="glyphicon glyphicon-user"></i> 添加好友</div>
+                                    <div class="operate operate-joingroup"><i class="glyphicon glyphicon-menu-hamburger"></i> 加入群</div>
+                                    <div class="operate operate-addgroup"><i class="glyphicon glyphicon-plus"></i> 创建群</div>
+                                    <div class="operate operate-signout"><i class="glyphicon glyphicon-off"></i> 退出</div>
                                 </div>
                             </div>
                         </div>
@@ -631,6 +634,19 @@
         	onAddEmotion: function(e){  // 添加表情
         		$('.emotion-panel').toggle();
         	},
+        	onAddFriend: function(){  // 添加好友
+        	},
+        	onJoinGroup: function(){  // 加入群
+        	},
+        	onLaunchChat: function(){  // 发起聊天
+        	},
+        	onAddGroup: function(){  // 创建群
+        	},
+        	onSignout: function(e){  // 退出
+        		im.conn.close();
+        		// 调用后台退出
+        		location.href= 'user/signout';
+        	},
         	handleReceiveMessage: function(easemobMessage){  //处理接收的消息
         		// 发送人
         		var from = easemobMessage.from;
@@ -682,6 +698,8 @@
         	    //设置用户上线状态，必须调用
         	    im.conn.setPresence();
         	},
+        	handleConnClosed: function(){  //连接关闭时回调处理
+        	},
         	handleOnError: function(e) {  //异常情况下的处理方法
         		console.log(e);
         		alert(e.msg);
@@ -698,11 +716,9 @@
 				    im.handleConnOpen();
 			    },
 			    onClosed : function() {  //当连接关闭时的回调方法
-				    handleClosed();
+				    im.handleConnClosed();
 			    },
 			    onTextMessage : function(message) {  //收到文本消息时的回调方法
-			    	console.log(message);
-			    
 				    im.handleReceiveMessage(message);
 			    },
 			    onEmotionMessage : function(message) {  //收到表情消息时的回调方法
@@ -754,6 +770,12 @@
         	$('.collapse').collapse({});
         	
         	//$('.im-body-content').scroll_absolute({arrows:true});
+        	// 用户操作
+        	$('.list-item-operate').click(function(){
+        		$('.operate-panel').toggle();
+        	});
+        	// 退出
+        	$('.operate-signout').click(im.onSignout);
         	
         	// 初始化表情列表
         	im.populateEmotionPanel();
