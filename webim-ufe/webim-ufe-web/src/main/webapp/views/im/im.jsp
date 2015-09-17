@@ -639,6 +639,7 @@
         	onJoinGroup: function(){  // 加入群
         	},
         	onLaunchChat: function(){  // 发起聊天
+        		//用户好友窗口
         	},
         	onAddGroup: function(){  // 创建群
         	},
@@ -774,6 +775,10 @@
         	$('.list-item-operate').click(function(){
         		$('.operate-panel').toggle();
         	});
+        	$('.operate-launchchat').click(im.onLaunchChat);
+        	$('.operate-addfriend').click(im.onAddFriend);
+        	$('.operate-joingroup').click(im.onJoinGroup);
+        	$('.operate-addgroup').click(im.onAddGroup);
         	// 退出
         	$('.operate-signout').click(im.onSignout);
         	
