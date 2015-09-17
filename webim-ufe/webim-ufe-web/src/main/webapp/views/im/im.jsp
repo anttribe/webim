@@ -24,11 +24,11 @@
                             <span class="list-item-operate"><i class="glyphicon glyphicon-align-justify"></i></span>
                             <div class="operate-panel" style="display: none;">
                                 <div class="operate-content">
-                                    <div class="operate operate-launchchat"><i class="glyphicon glyphicon-comment"></i> 发起聊天</div>
-                                    <div class="operate operate-addfriend"><i class="glyphicon glyphicon-user"></i> 添加好友</div>
-                                    <div class="operate operate-joingroup"><i class="glyphicon glyphicon-menu-hamburger"></i> 加入群</div>
-                                    <div class="operate operate-addgroup"><i class="glyphicon glyphicon-plus"></i> 创建群</div>
-                                    <div class="operate operate-signout"><i class="glyphicon glyphicon-off"></i> 退出</div>
+                                    <div class="operate operate-launchchat"><i class="glyphicon glyphicon-comment"></i> <spring:message code="app.im.action.launchchat" /></div>
+                                    <div class="operate operate-addfriend"><i class="glyphicon glyphicon-user"></i> <spring:message code="app.im.action.addfriend" /></div>
+                                    <div class="operate operate-joingroup"><i class="glyphicon glyphicon-menu-hamburger"></i> <spring:message code="app.im.action.joingroup" /></div>
+                                    <div class="operate operate-addgroup"><i class="glyphicon glyphicon-plus"></i> <spring:message code="app.im.action.addgroup" /></div>
+                                    <div class="operate operate-signout"><i class="glyphicon glyphicon-off"></i> <spring:message code="app.user.action.signout" /></div>
                                 </div>
                             </div>
                         </div>
@@ -96,7 +96,7 @@
                     <div class="panel-close"><i class="glyphicon glyphicon-remove"></i></div>
                 </div>
                 <div class="panel-body chat-body">
-                    <div class="message-more-btn"><i class="glyphicon glyphicon-time"></i> <span>查看更多消息</span></div>
+                    <div class="message-more-btn"><i class="glyphicon glyphicon-time"></i> <spring:message code="app.im.action.moremessage" /></div>
                     <div class="chat-message-list"></div>
                 </div>
                 <div class="panel-footer">
