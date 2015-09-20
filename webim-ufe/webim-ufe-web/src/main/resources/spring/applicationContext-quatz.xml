@@ -42,7 +42,7 @@
 		<property name="triggers">
 			<list>
 <!-- 				<ref bean="hxMessageSyncJobCronTrigger" /> -->
-				<ref bean="hxMessageDownloadJobCronTrigger" />
+<!-- 				<ref bean="hxMessageDownloadJobCronTrigger" /> -->
 			</list>
 		</property>
 	</bean>

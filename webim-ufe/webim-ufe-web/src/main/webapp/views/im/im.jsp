@@ -8,6 +8,7 @@
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <title><spring:message code="app.appname" /> - <spring:message code="app.im.title.im" /></title>
         <link rel="stylesheet" type="text/css" href="static/assets/bootstrap/css/bootstrap.min.css" />
+        <link rel="stylesheet" type="text/css" href="static/assets/bootstrap3-dialog/css/bootstrap-dialog.min.css" />
         <link rel="stylesheet" type="text/css" href="static/static/css/base.css" />
         <link rel="stylesheet" type="text/css" href="static/static/css/common.css" />
         <link rel="stylesheet" type="text/css" href="static/static/css/webim.css" />
@@ -113,6 +114,7 @@
     <script type="text/javascript" src="static/assets/jquery/jquery-1.11.1.js"></script>
     <script type="text/javascript" src="static/assets/jquery/jquery.form.js"></script>
     <script type="text/javascript" src="static/assets/bootstrap/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="static/assets/bootstrap3-dialog/js/bootstrap-dialog.min.js"></script>
     <!-- 环信webim sdk -->
     <script type="text/javascript" src="static/assets/easymob/strophe-custom-2.0.0.js"></script>
     <script type="text/javascript" src="static/assets/easymob/easemob.im-1.0.5.js"></script>
@@ -135,7 +137,7 @@
         	},
         	conn: null,  // 环信连接对象
         	user: {  // 当前用户对象
-        		userid: '',
+        		userid: '${user.userId}',
         		username: '${user.hxUsername}',
         		password: '${user.hxPassword}',
         		nickname: '${user.nickname}'
@@ -263,11 +265,11 @@
         	    }
         	},
         	createDialogue: function(user, chatUser){  // 创建会话
-        		if(user && user.userid && chatUser && chatUser.userid){
-        			var dialogue = $('#dialogue-' + user.userid + '-' + chatUser.userid, '#dialogues');
+        		if(user && user.username && chatUser && chatUser.userid){
+        			var dialogue = $('#dialogue-' + user.username + '-' + chatUser.userid, '#dialogues');
         			if(!dialogue || dialogue.length <= 0){
         				dialogue = $('<div>', {
-        					id: 'dialogue-' + user.userid + '-' + chatUser.userid,
+        					id: 'dialogue-' + user.username + '-' + chatUser.userid,
         					'class': 'list-item',
         					html: '<a href="#" class="list-item-avatar"><img src="static/static/img/avatar/roster_avatar_male.png" /></a><p class="list-item-name">' + chatUser.username || '' + '</p>'
         				}).attr({'data-id': chatUser.userid, 'data-name': chatUser.username, 'data-type': chatUser.type || 'chat'}).click(im.selectedUserToChating).appendTo('#dialogues');
@@ -306,7 +308,7 @@
         			$.ajax({
         				type: 'POST',
         				url: 'im/chatHistory',
-        				data: {mfrom: im.user.userid, mto: im.chatingUser.userid, mtimestamp: im.latestMessageTimestamp},
+        				data: {mfrom: im.user.username, mto: im.chatingUser.userid, mtimestamp: im.latestMessageTimestamp},
         				success: function(result){
         					if(result && result['resultCode'] == '000000'){
         						var datas = result['data'];
@@ -364,7 +366,7 @@
     									if(timestamp){
     										var tempMessages = messages[timestamp];
         									$.each(tempMessages, function(i, message){
-        										im.appendMessage(message, (message.mfrom == im.user.userid ? message.mto : message.mfrom), -1);
+        										im.appendMessage(message, (message.mfrom == im.user.username ? message.mto : message.mfrom), -1);
         									});
     									}
     								}
@@ -388,7 +390,7 @@
         	    
         	    // 添加发送人和发送时间
         	    $.extend(txtMessage, {
-        	    	from: im.user.userid, 
+        	    	from: im.user.username, 
         	    	ext: {
         	    	    timestamp: new Date().getTime()
         	        }
@@ -438,7 +440,7 @@
         	    
         	    // 添加发送人
         	    $.extend(fileMessage, {
-        	    	from: im.user.userid,
+        	    	from: im.user.username,
         	    	ext: {
         	    	    timestamp: new Date().getTime()
         	        }
@@ -542,12 +544,12 @@
             				}
             			}
             		}), $('<div>', {
-            			'class': 'avatar' + ' ' + (message.from == im.user.userid ? 'fr' : 'fl'),
+            			'class': 'avatar' + ' ' + (message.from == im.user.username ? 'fr' : 'fl'),
             			html: '<img src="static/static/img/avatar/roster_avatar_male.png" />'
             		}), $('<div>', {
             			'class': 'bubble',
             			html: $('<div>', {
-                			'class': 'bubble-content' + ' ' + (message.from == im.user.userid ? 'right fr' : 'left fl'),
+                			'class': 'bubble-content' + ' ' + (message.from == im.user.username ? 'right fr' : 'left fl'),
                 			html: [$('<pre>', {
                 				'class': 'content',
                 				html: function(){
@@ -635,11 +637,24 @@
         		$('.emotion-panel').toggle();
         	},
         	onAddFriend: function(){  // 添加好友
+        		im.populateSearchDialog();
         	},
         	onJoinGroup: function(){  // 加入群
         	},
         	onLaunchChat: function(){  // 发起聊天
         		//用户好友窗口
+        	},
+        	searchDialog: null,
+        	populateSearchDialog: function(){  // 构造查找(联系人、群)窗口
+        		if(!im.searchDialog){
+        			im.searchDialog = new BootstrapDialog({
+        				type: BootstrapDialog.TYPE_DEFAULT,
+        	            title: '<div class="model-header-title"><i class="glyphicon glyphicon-search"></i> 找人、找群</div>',
+        	            message: $('<div></div>').load('search?userid=' + im.user.userid)
+        	        });
+        			im.searchDialog.realize();
+        		}
+        	    im.searchDialog.open();
         	},
         	onAddGroup: function(){  // 创建群
         	},
@@ -651,7 +666,7 @@
         	handleReceiveMessage: function(easemobMessage){  //处理接收的消息
         		// 发送人
         		var from = easemobMessage.from;
-        		if(from && from != im.user.userid){
+        		if(from && from != im.user.username){
         			if(im.chatingUser && im.chatingUser.userid != from){
         				// 添加会话，消息提醒
         				im.createDialogue(im.user, {userid: from, username: from});
@@ -691,7 +706,7 @@
         	},
         	handleConnOpen: function(){  //连接打开时回调处理
         		//从连接中获取到当前的登录人注册帐号名
-    			im.user.userid = im.conn.context.userId;
+    			//im.user.username = im.conn.context.userId;
         	    //构造联系人列表
         	    im.populateRoster();
         	    //构造群组列表
