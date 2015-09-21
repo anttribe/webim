@@ -8,6 +8,7 @@
 package org.anttribe.webim.ufe.web.controller;
 
 import java.io.IOException;
+import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -18,6 +19,7 @@ import org.anttribe.webim.ufe.facade.UserFacade;
 import org.anttribe.webim.ufe.facade.dto.SearchDTO;
 import org.anttribe.webim.ufe.facade.dto.SearchType;
 import org.anttribe.webim.ufe.facade.dto.UserDTO;
+import org.anttribe.webim.ufe.web.constants.Constants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -61,16 +63,18 @@ public class SearchController
         @ModelAttribute SearchDTO searchDTO)
         throws IOException
     {
-        Result<?> result = null;
+        Result<Object> result = new Result<Object>();
         if (SearchType.roster == searchDTO.getType())
         {
-            result = new Result<UserDTO>();
-        }
-        else if (SearchType.roster == searchDTO.getType())
-        {
+            List<UserDTO> rosters = userfacade.searchRosters(searchDTO);
+            result.setData(rosters);
             
+            result.setResultCode(Constants.DEFAULT_SUCCESS_RESULTCODE);
         }
-        
+        else if (SearchType.group == searchDTO.getType())
+        {
+            result.setResultCode(Constants.DEFAULT_SUCCESS_RESULTCODE);
+        }
         return result;
     }
 }

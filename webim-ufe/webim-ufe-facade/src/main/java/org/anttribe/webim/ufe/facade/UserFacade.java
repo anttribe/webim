@@ -7,9 +7,13 @@
  */
 package org.anttribe.webim.ufe.facade;
 
+import java.util.List;
+
 import org.anttribe.webim.base.core.domain.User;
+import org.anttribe.webim.ufe.facade.dto.SearchDTO;
 import org.anttribe.webim.ufe.facade.dto.SigninDTO;
 import org.anttribe.webim.ufe.facade.dto.SignupDTO;
+import org.anttribe.webim.ufe.facade.dto.UserDTO;
 
 /**
  * @author zhaoyong
@@ -47,4 +51,12 @@ public interface UserFacade
      * @return boolean
      */
     boolean validateUsernameUnique(String username);
+    
+    /**
+     * 搜索联系人
+     * 
+     * @param searchDTO
+     * @return List<UserDTO>
+     */
+    List<UserDTO> searchRosters(SearchDTO searchDTO);
 }

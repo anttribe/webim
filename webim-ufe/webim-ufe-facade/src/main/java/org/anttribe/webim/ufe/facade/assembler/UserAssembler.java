@@ -7,9 +7,14 @@
  */
 package org.anttribe.webim.ufe.facade.assembler;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.anttribe.webim.base.core.domain.User;
 import org.anttribe.webim.ufe.facade.dto.SignupDTO;
+import org.anttribe.webim.ufe.facade.dto.UserDTO;
 import org.apache.commons.codec.digest.DigestUtils;
+import org.apache.commons.collections.CollectionUtils;
 
 /**
  * @author zhaoyong
@@ -29,5 +34,46 @@ public class UserAssembler
         // 加密密码
         user.setPassword(DigestUtils.md5Hex(signupDTO.getPassword()));
         return user;
+    }
+    
+    /**
+     * 
+     * @param users
+     * @return UserDTO
+     */
+    public static UserDTO toDTO(User userinfo)
+    {
+        if (null != userinfo)
+        {
+            UserDTO userDTO = new UserDTO();
+            userDTO.setUserId(userinfo.getUserId());
+            userDTO.setUsername(userinfo.getUsername());
+            userDTO.setEmail(userinfo.getEmail());
+            userDTO.setAvatar(userinfo.getAvatar());
+            userDTO.setNickname(userinfo.getNickname());
+            userDTO.setSignature(userinfo.getSignature());
+            userDTO.setHxUsername(userinfo.getHxUsername());
+            userDTO.setHxPassword(userinfo.getHxPassword());
+            return userDTO;
+        }
+        return null;
+    }
+    
+    /**
+     * @param users
+     * @return List<UserDTO>
+     */
+    public static List<UserDTO> toDTO(List<User> users)
+    {
+        List<UserDTO> dtos = null;
+        if (!CollectionUtils.isEmpty(users))
+        {
+            dtos = new ArrayList<UserDTO>();
+            for (User user : users)
+            {
+                dtos.add(UserAssembler.toDTO(user));
+            }
+        }
+        return dtos;
     }
 }

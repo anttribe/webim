@@ -73,6 +73,17 @@ public class UserApplicationImpl implements UserApplication
     }
     
     @Override
+    public List<User> listByKeywords(String keywords, String currentUser)
+    {
+        Map<String, Object> criteria = new HashMap<String, Object>();
+        criteria.put("username", keywords);
+        criteria.put("currentUser", currentUser);
+        criteria.put("available", 1);
+        
+        return User.find(User.class, criteria);
+    }
+    
+    @Override
     public void saveUserInfo(User userInfo)
     {
         if (null != userInfo)
@@ -82,10 +93,11 @@ public class UserApplicationImpl implements UserApplication
             userInfo.save();
             
             // 环信用户注册
-            ObjectNode signupResNode = EasemobUserIntfManager.signupHxUser(userInfo.getUsername(),
-                userInfo.getPassword(),
-                userInfo.getNickname());
-                
+            ObjectNode signupResNode =
+                EasemobUserIntfManager.signupHxUser(userInfo.getUsername(),
+                    userInfo.getPassword(),
+                    userInfo.getNickname());
+            
             // 更新用户信息
             userInfo.setHxUsername(userInfo.getUsername());
             userInfo.setHxPassword(userInfo.getPassword());

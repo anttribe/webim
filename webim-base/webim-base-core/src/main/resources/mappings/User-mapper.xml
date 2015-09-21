@@ -59,12 +59,20 @@
 		<![CDATA[
 		SELECT id, username, password, nickname, email, mobile, avatar, signature, create_time, update_time, latest_login_time, available, hx_username, hx_password
 		    FROM t_webim_user t
-		        WHERE t.username = #{userAccount}
-		           OR t.email = #{userAccount}
 		]]>
-		<if test="null != available">
-			AND available = ${available}
-		</if>
+		<where>
+			<if test="null != username and username != ''">
+				AND t.username like '%${username}%'
+			</if>
+			<if test="null != currentUser and currentUser != ''">
+				<![CDATA[
+				    AND id <> #{currentUser}
+				]]>
+			</if>
+			<if test="null != available">
+				AND available = #{available:BOOLEAN}
+			</if>
+		</where>
 	</select>
 
 	<!-- queryByUserAccount: 根据userAccount查找对应的用户信息 -->
@@ -86,12 +94,12 @@
 		    FROM t_webim_user t
 		]]>
 		<where>
-		    <if test="username != null and username != ''">
-		        AND username = #{username}
-		    </if>
-		    <if test="email != null and email != ''">
-		        AND email = #{email}
-		    </if>
+			<if test="username != null and username != ''">
+				AND username = #{username}
+			</if>
+			<if test="email != null and email != ''">
+				AND email = #{email}
+			</if>
 		</where>
 	</select>
 </mapper>

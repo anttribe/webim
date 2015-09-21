@@ -7,6 +7,8 @@
  */
 package org.anttribe.webim.ufe.facade.impl;
 
+import java.util.List;
+
 import org.anttribe.webim.base.application.UserApplication;
 import org.anttribe.webim.base.core.common.errorno.SystemErrorNumber;
 import org.anttribe.webim.base.core.common.errorno.UserErrorNumber;
@@ -14,9 +16,12 @@ import org.anttribe.webim.base.core.common.exception.UnifyException;
 import org.anttribe.webim.base.core.domain.User;
 import org.anttribe.webim.ufe.facade.UserFacade;
 import org.anttribe.webim.ufe.facade.assembler.UserAssembler;
+import org.anttribe.webim.ufe.facade.dto.SearchDTO;
 import org.anttribe.webim.ufe.facade.dto.SigninDTO;
 import org.anttribe.webim.ufe.facade.dto.SignupDTO;
+import org.anttribe.webim.ufe.facade.dto.UserDTO;
 import org.apache.commons.codec.digest.DigestUtils;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -115,4 +120,18 @@ public class UserFacadeImpl implements UserFacade
         }
         return Boolean.TRUE;
     }
+    
+    @Override
+    public List<UserDTO> searchRosters(SearchDTO searchDTO)
+    {
+        List<User> users = userApplication.listByKeywords(searchDTO.getKeys(), searchDTO.getCurrentUser());
+        if (!CollectionUtils.isEmpty(users))
+        {
+            List<UserDTO> rosters = UserAssembler.toDTO(users);
+            return rosters;
+        }
+        
+        return null;
+    }
+    
 }

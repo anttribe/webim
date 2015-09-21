@@ -7,6 +7,8 @@
  */
 package org.anttribe.webim.base.application;
 
+import java.util.List;
+
 import org.anttribe.webim.base.core.domain.User;
 
 /**
@@ -45,4 +47,13 @@ public interface UserApplication
      * @param userInfo
      */
     void saveUserInfo(User userInfo);
+    
+    /**
+     * 根据关键字列表用户信息
+     * 
+     * @param keywords 关键字
+     * @param currentUser 当前用户
+     * @return List<User>
+     */
+    List<User> listByKeywords(String keywords, String currentUser);
 }
