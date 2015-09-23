@@ -29,3 +29,12 @@ body { padding: 0; background: #FFFFFF; color: rgba(0,0,0,.75); font-size: 13px;
 .tooltip-error:before, .tooltip-error:after { position: absolute; top: 6px; border: 5px solid transparent; content: " "; }
 .tooltip-error.left:after { right: 100%; border-right-color: #f2dede; border-right-width: 5px; }
 .tooltip-error .error { font-size: 13px; }
+
+.separate { border: 1px solid #F4F6E8; }
+
+.bootstrap-dialog .bootstrap-dialog-message { font-size: 13px !important; }
+.modal-header { background: linear-gradient(#555,#222) !important; }
+.modal-header .model-header-title { color: #FFFFFF !important; }
+.modal-header .close { color: #FFFFFF !important; opacity: 1.0 !important; }
+.modal-header .close:hover { color: #FFFFFF !important; opacity: 0.2 !important; }
+.modal-body { font-size: 13px !important; }

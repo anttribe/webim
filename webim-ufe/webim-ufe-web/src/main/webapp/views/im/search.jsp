@@ -8,11 +8,16 @@
 </ul>
 <div class="tab-content">
     <div id="search-rosters" class="tab-pane active">
-        <div class="input-group">
-            <input type="text" id="input-search-rosters" class="form-control" placeholder="<spring:message code="app.im.title.searchrosters" />...">
-            <span class="input-group-btn">
-                <button id="btn-search-rosters" class="btn btn-default" type="button"><spring:message code="app.common.action.search" /></button>
-            </span>
+        <div class="pt10 pb10">
+            <div class="input-group">
+                <input type="text" id="input-search-rosters" class="form-control" placeholder="<spring:message code="app.im.title.searchrosters" />...">
+                <span class="input-group-btn">
+                    <button id="btn-search-rosters" class="btn btn-default" type="button"><spring:message code="app.common.action.search" /></button>
+                </span>
+            </div>
+        </div>
+        <div class="clearfix separate"></div>
+        <div id="search-rosters-list" class="content">
         </div>
     </div>
     <div id="search-groups" class="tab-pane">
@@ -33,6 +38,26 @@
             		data: {type: 'roster', currentUser: search.user.userid, keys: keys},
             		success: function(result){
             			console.log(result);
+            			if(result && result['resultCode'] == '000000'){
+            				var datas = result['data'];
+            				if(datas && datas.length > 0){
+            					var $html = '';
+            					for(var i=0; i<datas.length; i++){
+            						var data = datas[i];
+            						if(!data){
+            							continue;
+            						}
+            						$html += '<div class="list-item">'
+            						       + '<a href="#" class="list-item-avatar"><img src="' + (data['avatar'] || 'static/static/img/avatar/roster_avatar_male.png') + '" /></a>'
+            						       + '<span class="list-item-name">' + (data['username'] || '') + '</span>'
+            						       + '<div class="list-item-operate">' 
+            						       + '<span class=""><i class="glyphicon glyphicon-plus"></i> 好友</span>'
+            						       + '</div>'
+            						       + '</div>';
+            					}
+            					$('#search-rosters-list').html($html);
+            				}
+            			}
             		}
             	});
             }
