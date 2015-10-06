@@ -639,6 +639,49 @@
         	onAddFriend: function(){  // 添加好友
         		im.populateSearchDialog();
         	},
+        	addFriendApply: function(){  // 添加好友申请
+        		var friendUsername = $(this).parents('.list-item').attr('data-id');
+        	    if(friendUsername){
+        	    	BootstrapDialog.show({
+        	    		size: BootstrapDialog.SIZE_NORMAL,
+        				draggable: true,
+        	            title: '<div class="model-header-title"><i class="glyphicon glyphicon-user"></i> <spring:message code="app.common.action.add" />' + friendUsername + '<spring:message code="app.im.title.addFriend" /></div>',
+        	            message: function(dialogRef){
+        	            	var $message = $('<div>', {
+        	            		html: '<div class="list-item" data-id="' + friendUsername + '">'
+					                + '<a href="#" class="list-item-avatar"><img src="static/static/img/avatar/roster_avatar_male.png" /></a>'
+					                + '<span class="list-item-name">' + friendUsername + '</span>'
+					                + '<div class="list-item-operate">'
+					                + '<textarea class="form-control" id="friendApply_' + friendUsername + '"></textarea>'
+					                + '</div>'
+					                + '</div>'
+        	            	});
+        	            	return $message;
+        	            },
+        	            buttons: [{
+        	                label: '<spring:message code="app.common.action.confirm" />',
+        	                action: function(dialogRef) {
+        	                	if($('#friendApply_' + friendUsername, dialogRef.getMessage()).length>0){
+        	                		var applyMessage = $('#friendApply_' + friendUsername, dialogRef.getMessage()).val();
+        	                		if(applyMessage){
+        	                			//发送添加好友请求
+                	        	    	im.conn.subscribe({
+                	        	    		to: friendUsername,
+                	        	    		message: '' + applyMessage
+                	        	    	});
+                	        	    	dialogRef.close();
+        	                		}
+        	                	}
+        	                }
+        	            }, {
+        	                label: '<spring:message code="app.common.action.cancel" />',
+        	                action: function(dialogRef) {
+        	                	dialogRef.close();
+        	                }
+        	            }]
+        	        });
+        	    }
+        	},
         	onJoinGroup: function(){  // 加入群
         	},
         	onLaunchChat: function(){  // 发起聊天
@@ -646,14 +689,14 @@
         	},
         	searchDialog: null,
         	populateSearchDialog: function(){  // 构造查找(联系人、群)窗口
-        		if(!im.searchDialog){
-        			im.searchDialog = new BootstrapDialog({
-        				type: BootstrapDialog.TYPE_DEFAULT,
-        	            title: '<div class="model-header-title"><i class="glyphicon glyphicon-search"></i> 找人、找群</div>',
-        	            message: $('<div></div>').load('search?userid=' + im.user.userid)
-        	        });
-        			im.searchDialog.realize();
-        		}
+        		im.searchDialog = new BootstrapDialog({
+    				size: BootstrapDialog.SIZE_WIDE,
+    				type: BootstrapDialog.TYPE_DEFAULT,
+    				draggable: true,
+    				closable: true,
+    	            title: '<div class="model-header-title"><i class="glyphicon glyphicon-search"></i> <spring:message code="app.im.title.searchrosters"/>、<spring:message code="app.im.title.searchgroups"/></div>',
+    	            message: $('<div></div>').load('search?userid=' + im.user.userid)
+    	        });
         	    im.searchDialog.open();
         	},
         	onAddGroup: function(){  // 创建群
@@ -703,6 +746,73 @@
     		        }
         	    });
 		        Easemob.im.Helper.download(options);
+        	},
+        	presenceMessageHandlers: {  // 订阅请求消息类型
+        		subscribe: {  //(发送者希望订阅接收者的出席信息), 即别人申请加你为好友
+        			agreeAddFriend: function(message){
+        				im.conn.subscribed({
+	        	    		to: message['from'],
+	        	    		message: '[resp:true]'
+	        	    	});
+        			},
+        			handle: function(message){
+        				if(message && message.status && message.status.indexOf('resp:true') > -1){
+        					this.agreeAddFriend(message);
+        					return;
+        				}
+        				var that = this;
+        				BootstrapDialog.show({
+            	    		size: BootstrapDialog.SIZE_NORMAL,
+            				draggable: true,
+            	            title: '<div class="model-header-title"><i class="glyphicon glyphicon-user"></i> ' + message['from'] + '<spring:message code="app.im.title.addFriendApply" /></div>',
+            	            message: function(dialogRef){
+            	            	var $message = $('<div>', {
+            	            		html: '<div class="list-item" data-id="' + message['from'] + '">'
+    					                + '<a href="#" class="list-item-avatar"><img src="static/static/img/avatar/roster_avatar_male.png" /></a>'
+    					                + '<span class="list-item-name">' + message['from'] + '</span>'
+    					                + '<div class="list-item-operate">' + (message['status'] || '') + '</div>'
+    					                + '</div>'
+            	            	});
+            	            	return $message;
+            	            },
+            	            buttons: [{
+            	                label: '<spring:message code="app.common.action.accept" />',
+            	                action: function(dialogRef) {
+            	                	that.agreeAddFriend(message);
+            	        	    	//反向添加对方好友
+            	        	    	im.conn.subscribe({
+            	    					to : message['from'],
+            	    					message: '[resp:true]'
+            	    				});
+            	        	    	dialogRef.close();
+            	                }
+            	            }, {
+            	                label: '<spring:message code="app.common.action.refuse" />',
+            	                action: function(dialogRef) {
+            	                	// 拒绝添加好友
+            	                	conn.unsubscribed({
+            	            			to : message['from'],
+            	            			message : (new Date()).getTime()
+            	            		});
+            	                }
+            	            }]
+            	        });
+        			}
+        		},
+        		subscribed: {  //(发送者允许接收者接收他们的出席信息), 即别人同意你加他为好友
+        		},
+        		unsubscribe: {  //(发送者取消订阅另一个实体的出席信息), 即删除现有好友
+        		},
+        		unsubscribed: {  //(订阅者的请求被拒绝或以前的订阅被取消), 即对方单向的删除了好友
+        		}
+        	},
+        	handlePresenceMessage: function(message){  // 处理订阅请求消息
+        		if(message && message.type){
+        			if(im.presenceMessageHandlers[message.type]){
+        				var handler = im.presenceMessageHandlers[message.type];
+        				handler.handle(message);
+        			}
+        		}
         	},
         	handleConnOpen: function(){  //连接打开时回调处理
         		//从连接中获取到当前的登录人注册帐号名
@@ -756,10 +866,10 @@
 			    	im.handleReceiveFileMessage(message);
 			    },
 			    onPresence : function(message) {  //收到联系人订阅请求的回调方法
-				    handlePresence(message);
+				    im.handlePresenceMessage(message);
 			    },
 			    onRoster : function(message) {  //收到联系人信息的回调方法
-				    handleRoster(message);
+				    console.log(message);
 			    },
 			    onInviteMessage : function(message) {  //收到群组邀请时的回调方法
 				    handleInviteMessage(message);

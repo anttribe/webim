@@ -37,7 +37,6 @@
             		url: 'search/doSearch',
             		data: {type: 'roster', currentUser: search.user.userid, keys: keys},
             		success: function(result){
-            			console.log(result);
             			if(result && result['resultCode'] == '000000'){
             				var datas = result['data'];
             				if(datas && datas.length > 0){
@@ -47,15 +46,16 @@
             						if(!data){
             							continue;
             						}
-            						$html += '<div class="list-item">'
+            						$html += '<div class="list-item" data-id="' + (data.hxUsername || '') + '">'
             						       + '<a href="#" class="list-item-avatar"><img src="' + (data['avatar'] || 'static/static/img/avatar/roster_avatar_male.png') + '" /></a>'
             						       + '<span class="list-item-name">' + (data['username'] || '') + '</span>'
             						       + '<div class="list-item-operate">' 
-            						       + '<span class=""><i class="glyphicon glyphicon-plus"></i> 好友</span>'
+            						       + '<span class="operate operate-addroster"><i class="glyphicon glyphicon-plus"></i> 好友</span>'
             						       + '</div>'
             						       + '</div>';
             					}
             					$('#search-rosters-list').html($html);
+            					$('.operate-addroster').click(im.addFriendApply);
             				}
             			}
             		}
